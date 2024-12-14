@@ -10,6 +10,7 @@ The config should also self-bootstrap itself.
 - GCC
 - Go
 - Git
+- Java (for ltex ls)
 
 ## Additions
 
