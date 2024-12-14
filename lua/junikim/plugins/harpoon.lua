@@ -2,14 +2,8 @@ return {
   "ThePrimeagen/harpoon",
   branch = "harpoon2",
   dependencies = { "nvim-lua/plenary.nvim" },
-  config = function()
+  init = function()
     local harpoon = require("harpoon")
-    harpoon.setup({
-      settings = {
-        save_on_toggle = true,
-        tabline = true,
-      }
-    })
 
     local function selector(idx)
       local function func()
@@ -23,8 +17,31 @@ return {
       vim.keymap.set('n', '<leader>' .. tab, selector(tab))
       tab = tab + 1
     end
+    vim.keymap.set('n', 'ha', selector(1))
+    vim.keymap.set('n', 'hs', selector(2))
+    vim.keymap.set('n', 'hd', selector(3))
+    vim.keymap.set('n', 'hf', selector(4))
 
     vim.keymap.set("n", "<leader>p", function() harpoon:list():add() end)
+    vim.keymap.set("n", "<leader>c", function()
+      if vim.bo.modified then
+        local choice = vim.fn.confirm(("Save changes to %q?"):format(vim.fn.bufname()), "&Yes\n&No\n&Cancel")
+        if choice == 1 then     -- Yes
+          vim.cmd.write()
+          vim.cmd('bd')
+        elseif choice == 2 then     -- No
+          vim.cmd('bd!')
+        end
+      else
+        vim.cmd('bd')
+      end
+    end)
     vim.keymap.set("n", "<leader>h", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+
+    local res = ''
+    for key, value in pairs(harpoon:list().items) do
+      res = res .. 'key: ' .. key .. 'value:' .. value.value .. ',  '
+    end
+    print('res:', res)
   end
 }
