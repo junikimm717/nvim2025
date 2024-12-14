@@ -1,43 +1,69 @@
 return {
-  'romgrk/barbar.nvim',
-  dependencies = {
-    'lewis6991/gitsigns.nvim',     -- OPTIONAL: for git status
-    'nvim-tree/nvim-web-devicons', -- OPTIONAL: for file icons
-  },
-  init = function()
-    vim.g.barbar_auto_setup = false
-    local map = vim.api.nvim_set_keymap
-    local opts = { noremap = true, silent = true }
+  "romgrk/barbar.nvim",
+  dependencies = { "ThePrimeagen/harpoon" },
+  config = function()
+    local barbar = require("barbar")
+    local state = require("barbar.state")
+    local render = require("barbar.ui.render")
+    local harpoon = require("harpoon")
 
-    -- Move to previous/next
-    map('n', '<leader>,', '<Cmd>BufferPrevious<CR>', opts)
-    map('n', '<leader>.', '<Cmd>BufferNext<CR>', opts)
-    -- Re-order to previous/next
-    map('n', '<leader><', '<Cmd>BufferMovePrevious<CR>', opts)
-    map('n', '<leader>>', '<Cmd>BufferMoveNext<CR>', opts)
-    -- Goto buffer in position...
-    map('n', '<leader>1', '<Cmd>BufferGoto 1<CR>', opts)
-    map('n', '<leader>2', '<Cmd>BufferGoto 2<CR>', opts)
-    map('n', '<leader>3', '<Cmd>BufferGoto 3<CR>', opts)
-    map('n', '<leader>4', '<Cmd>BufferGoto 4<CR>', opts)
-    map('n', '<leader>5', '<Cmd>BufferGoto 5<CR>', opts)
-    map('n', '<leader>6', '<Cmd>BufferGoto 6<CR>', opts)
-    map('n', '<leader>7', '<Cmd>BufferGoto 7<CR>', opts)
-    map('n', '<leader>8', '<Cmd>BufferGoto 8<CR>', opts)
-    map('n', '<leader>9', '<Cmd>BufferGoto 9<CR>', opts)
-    map('n', '<leader>0', '<Cmd>BufferLast<CR>', opts)
-    -- Pin/unpin buffer
-    map('n', '<leader>p', '<Cmd>BufferPin<CR>', opts)
-    map('n', '<leader>i', '<Cmd>BufferPick<CR>', opts)
-    -- Close buffer
-    map('n', '<leader>c', '<Cmd>w|BufferClose<CR>', opts)
-    map('n', '<leader>q', '<Cmd>BufferClose!<CR>', opts)
+    barbar.setup({
+      hide = {
+        inactive = true,
+      },
+      icons = {
+        pinned = { filename = true, buffer_index = true },
+        diagnostics = { { enabled = true } },
+      },
+    })
+
+    local function unpin_all()
+      for _, buf in ipairs(state.buffers) do
+        local data = state.get_buffer_data(buf)
+        data.pinned = false
+      end
+    end
+
+    local function get_buffer_by_mark(mark)
+      for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+        local buffer_path = vim.api.nvim_buf_get_name(buf)
+
+        if buffer_path == "" or mark.value == "" then
+          goto continue
+        end
+
+        local mark_pattern = mark.value:gsub("([%(%)%.%%%+%-%*%?%[%]%^%$])", "%%%1")
+        if string.match(buffer_path, mark_pattern) then
+          return buf
+        end
+
+        local buffer_path_pattern = buffer_path:gsub("([%(%)%.%%%+%-%*%?%[%]%^%$])", "%%%1")
+        if string.match(mark.value, buffer_path_pattern) then
+          return buf
+        end
+
+        ::continue::
+      end
+    end
+
+    local function refresh_all_harpoon_tabs()
+      local list = harpoon:list()
+      unpin_all()
+      for _, mark in ipairs(list.items) do
+        local buf = get_buffer_by_mark(mark)
+        if buf == nil then
+          vim.cmd("badd " .. mark.value)
+          buf = get_buffer_by_mark(mark)
+        end
+        if buf ~= nil then
+          state.toggle_pin(buf)
+        end
+      end
+      render.update()
+    end
+
+    vim.api.nvim_create_autocmd({ "BufEnter", "BufAdd", "BufLeave", "User" }, {
+      callback = refresh_all_harpoon_tabs,
+    })
   end,
-  opts = {
-    -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
-    -- animation = true,
-    -- insert_at_start = true,
-    -- …etc.
-  },
-  version = '^1.9.0', -- optional: only update when a new 1.x version is released
 }
