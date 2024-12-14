@@ -55,15 +55,15 @@ vim.api.nvim_create_autocmd(
   }
 )
 
-vim.api.nvim_create_autocmd(
-  { "BufRead", "BufNewFile" },
-  {
-    pattern = { "*.mdx", "*.md" },
-    callback = function(args)
-      vim.bo.filetype = "markdown"
-    end
-  }
-)
+-- vim.api.nvim_create_autocmd(
+--   { "BufRead", "BufNewFile" },
+--   {
+--     pattern = { "*.mdx", "*.md" },
+--     callback = function(args)
+--       vim.bo.filetype = "markdown"
+--     end
+--   }
+-- )
 
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "tex", "text" },
