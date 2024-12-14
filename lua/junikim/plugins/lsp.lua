@@ -28,6 +28,18 @@ return {
     end,
   },
 
+  {
+    "folke/lazydev.nvim",
+    ft = "lua", -- only load on lua files
+    opts = {
+      library = {
+        -- See the configuration section for more details
+        -- Load luvit types when the `vim.uv` word is found
+        { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+      },
+    },
+  },
+
   -- Autocompletion
   {
     'hrsh7th/nvim-cmp',
@@ -52,6 +64,10 @@ return {
           { name = 'path' },
           { name = 'buffer' },
           { name = 'nvim_lua' },
+          {
+            name = "lazydev",
+            group_index = 0, -- set group index to 0 to skip loading LuaLS completions
+          }
         }, {
           { name = 'buffer' },
         }),
@@ -135,6 +151,8 @@ return {
         end,
       })
 
+      local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
+
       require('mason-lspconfig').setup({
         ensure_installed = {
           'tailwindcss',
@@ -144,12 +162,15 @@ return {
           'ltex',
           'jsonls',
           'bashls',
+          'lua_ls',
         },
         handlers = {
           -- this first function is the "default handler"
           -- it applies to every language server without a "custom handler"
           function(server_name)
-            require('lspconfig')[server_name].setup({})
+            require('lspconfig')[server_name].setup({
+              capabilities = lsp_capabilities,
+            })
           end,
         }
       })
