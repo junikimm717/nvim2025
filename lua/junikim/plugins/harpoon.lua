@@ -26,10 +26,10 @@ return {
     vim.keymap.set("n", "<leader>c", function()
       if vim.bo.modified then
         local choice = vim.fn.confirm(("Save changes to %q?"):format(vim.fn.bufname()), "&Yes\n&No\n&Cancel")
-        if choice == 1 then     -- Yes
+        if choice == 1 then
           vim.cmd.write()
           vim.cmd('bd')
-        elseif choice == 2 then     -- No
+        elseif choice == 2 then
           vim.cmd('bd!')
         end
       else
@@ -37,11 +37,5 @@ return {
       end
     end)
     vim.keymap.set("n", "<leader>h", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
-
-    local res = ''
-    for key, value in pairs(harpoon:list().items) do
-      res = res .. 'key: ' .. key .. 'value:' .. value.value .. ',  '
-    end
-    print('res:', res)
   end
 }
