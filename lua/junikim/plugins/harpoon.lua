@@ -17,10 +17,10 @@ return {
       vim.keymap.set('n', '<leader>' .. tab, selector(tab))
       tab = tab + 1
     end
-    vim.keymap.set('n', 'ha', selector(1))
-    vim.keymap.set('n', 'hs', selector(2))
-    vim.keymap.set('n', 'hd', selector(3))
-    vim.keymap.set('n', 'hf', selector(4))
+    vim.keymap.set('n', '<leader>a', selector(1))
+    vim.keymap.set('n', '<leader>s', selector(2))
+    vim.keymap.set('n', '<leader>d', selector(3))
+    vim.keymap.set('n', '<leader>f', selector(4))
 
     vim.keymap.set("n", "<leader>p", function() harpoon:list():add() end)
     vim.keymap.set("n", "<leader>c", function()
