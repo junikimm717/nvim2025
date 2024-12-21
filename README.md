@@ -7,13 +7,13 @@ The config should also self-bootstrap itself.
 
 - The latest version of neovim
 - Nodejs
-- GCC
+- GCC and Make
 - Go
 - Git
 - Java (for ltex ls)
+- RipGrep
 
 ## Additions
 
-- Shellcheck
 - Fzf
 - Tmux
