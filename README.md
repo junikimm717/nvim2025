@@ -6,7 +6,7 @@ The config should also self-bootstrap itself.
 ## Requirements
 
 - The latest version of neovim
-- Nodejs
+- Nodejs (and also treesitter cli)
 - GCC and Make
 - Go
 - Git
