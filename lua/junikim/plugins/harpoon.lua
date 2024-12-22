@@ -20,7 +20,6 @@ return {
     vim.keymap.set('n', '<leader>a', selector(1))
     vim.keymap.set('n', '<leader>s', selector(2))
     vim.keymap.set('n', '<leader>d', selector(3))
-    vim.keymap.set('n', '<leader>f', selector(4))
 
     vim.keymap.set("n", "<leader>p", function() harpoon:list():add() end)
     vim.keymap.set("n", "<leader>c", function()
@@ -35,6 +34,12 @@ return {
       else
         vim.cmd('bd')
       end
+    end)
+    vim.keymap.set("n", "<leader>q", function ()
+      vim.cmd('bd!')
+    end)
+    vim.keymap.set("n", "ZB", function ()
+      vim.cmd('bd!')
     end)
     vim.keymap.set("n", "<leader>h", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
   end

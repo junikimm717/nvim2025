@@ -31,23 +31,16 @@ vim.keymap.set("n", "<leader>Y", [["+Y]])
 vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
 vim.keymap.set("n", "<leader>X", "<cmd>!chmod -x %<CR>", { silent = true })
 
-
 -- execute file
 vim.keymap.set("n", "<leader>r", "<cmd>so ~/.config/nvim/init.lua<CR>")
 vim.keymap.set("n", "<leader>e", "<cmd>!%:p<CR>", { silent = true })
 
-vim.keymap.set("n", "<leader>vz", "<cmd>e ~/.zshrc<CR>");
-vim.keymap.set("n", "<leader>vc", "<cmd>e ~/.config/nvim<CR>");
-
 
 if os.getenv("TMUX") ~= nil then
   vim.keymap.set("n", "<C-f>", [[<cmd>silent !tmux neww tmuxs\; setenv WORKSPACES $WORKSPACES \;<CR>]])
-  vim.keymap.set("n", "<C-y>", [[<cmd>silent !tmux neww cht.sh<CR>]])
 else
   local function unavailable()
     print("Not in a tmux session")
   end
-
   vim.keymap.set("n", "<C-f>", unavailable)
-  vim.keymap.set("n", "<C-y>", unavailable)
 end
