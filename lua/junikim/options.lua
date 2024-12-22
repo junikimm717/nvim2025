@@ -55,16 +55,6 @@ vim.api.nvim_create_autocmd(
   }
 )
 
--- vim.api.nvim_create_autocmd(
---   { "BufRead", "BufNewFile" },
---   {
---     pattern = { "*.mdx", "*.md" },
---     callback = function(args)
---       vim.bo.filetype = "markdown"
---     end
---   }
--- )
-
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "tex", "text" },
   callback = function(args)
@@ -99,6 +89,5 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.bo.softtabstop = 4
     vim.bo.preserveindent = true
     vim.bo.copyindent = true
-    vim.api.nvim_set_keymap("n", "<F4>", ":w|:!cpgo test<CR>", { noremap = true })
   end
 })

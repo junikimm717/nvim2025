@@ -77,9 +77,17 @@ return {
         mapping = cmp.mapping.preset.insert({
           ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
           ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
-          ['<Tab>'] = cmp.mapping.select_next_item(cmp_select),
+          ['<Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_next_item(cmp_select)
+            elseif luasnip.expand_or_jumpable() then
+              luasnip.expand_or_jump()
+            else
+              fallback()
+            end
+          end),
           ['<S-Tab>'] = cmp.mapping.abort(),
-          ["<CR>"] = cmp.mapping({
+          ['<CR>'] = cmp.mapping({
             i = function(fallback)
               --  and cmp.get_selected_entry()
               if cmp.visible() then
@@ -178,6 +186,17 @@ return {
             })
           end,
         }
+      })
+    end
+  },
+  {
+    "L3MON4D3/LuaSnip",
+    -- follow latest release.
+    version = "v2.*",
+    build = "make install_jsregexp",
+    config = function()
+      require("luasnip.loaders.from_snipmate").lazy_load({
+        paths = { "./lua/junikim/snippets" }
       })
     end
   }

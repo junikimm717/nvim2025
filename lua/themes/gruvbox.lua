@@ -7,6 +7,7 @@ return {
     -- Optional; default configuration will be used if setup isn't called.
     config = function()
       require('gruvbox').setup {
+        transparent_mode = true,
       }
 
       local day = 9
