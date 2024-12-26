@@ -6,7 +6,7 @@ local function script_path()
   return str:match('(.*' .. '/' .. ')')
 end
 
-local themepkgs = {}
+local themepkgs = nil
 local success, theme = pcall(require, "themes")
 if not success then
   local file = io.open(script_path() .. './lua/themes/init.lua', 'w')
