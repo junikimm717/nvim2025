@@ -14,6 +14,7 @@ vim.opt.colorcolumn = "80"
 vim.opt.list = true
 vim.opt.wrap = false
 vim.opt.conceallevel = 1
+-- vim.o.sms = true
 
 -- ufo config stuff?
 vim.o.foldcolumn = '1'   -- '0' is not bad

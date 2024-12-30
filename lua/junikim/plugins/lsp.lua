@@ -62,7 +62,6 @@ return {
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'path' },
-          { name = 'buffer' },
           { name = 'nvim_lua' },
           {
             name = "lazydev",
@@ -175,6 +174,7 @@ return {
           'jsonls',
           'bashls',
           'lua_ls',
+          'marksman',
         },
         automatic_installation = true,
         handlers = {
