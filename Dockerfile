@@ -1,6 +1,5 @@
 FROM fedora:latest
 
-RUN dnf update -y
 RUN dnf install -y neovim ripgrep nodejs gcc make go git fzf npm zip unzip\
   curl tar java-latest-openjdk-headless
 
