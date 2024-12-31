@@ -94,8 +94,3 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.bo.copyindent = true
   end,
 })
-
-vim.api.nvim_create_user_command("FullSetup", function()
-  vim.cmd([[:TSUpdateSync]])
-  require("mason-tool-installer").check_install(false, true)
-end, { desc = "Setup Mason and Treesitter" })

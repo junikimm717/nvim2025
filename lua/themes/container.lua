@@ -1,3 +1,9 @@
+-- full setup command here (container specific)
+vim.api.nvim_create_user_command("FullSetup", function()
+  require("mason-tool-installer").check_install(false, true)
+  vim.cmd([[:TSUpdateSync]])
+end, { desc = "Setup Mason and Treesitter" })
+
 return {
   {
     "folke/tokyonight.nvim",
