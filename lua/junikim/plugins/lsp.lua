@@ -52,12 +52,18 @@ return {
         },
         mapping = cmp.mapping.preset.insert({
           ["<C-p>"] = cmp.mapping.select_prev_item(cmp_select),
-          ["<C-n>"] = cmp.mapping.select_next_item(cmp_select),
-          ["<Tab>"] = cmp.mapping(function(fallback)
+          ["<C-n>"] = cmp.mapping(function(fallback)
             if cmp.visible() then
               cmp.select_next_item(cmp_select)
             elseif luasnip.expand_or_jumpable() then
               luasnip.expand_or_jump()
+            else
+              fallback()
+            end
+          end),
+          ["<Tab>"] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_next_item(cmp_select)
             else
               fallback()
             end

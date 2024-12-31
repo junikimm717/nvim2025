@@ -1,7 +1,25 @@
-FROM fedora:latest
+FROM debian:sid AS builder
 
-RUN dnf install -y neovim ripgrep nodejs gcc make go git fzf npm zip unzip\
-  curl tar java-latest-openjdk-headless
+WORKDIR /workspace
+RUN apt-get update
+RUN apt-get install -y ninja-build gettext cmake unzip curl build-essential file
+RUN curl -LJ https://github.com/neovim/neovim/archive/refs/tags/nightly.tar.gz\
+  -o neovim.tar.gz\
+  && tar -xzvf neovim.tar.gz\
+  && mv neovim-nightly neovim
+
+WORKDIR /workspace/neovim
+RUN make CMAKE_BUILD_TYPE=Release
+RUN cd build && cpack -G DEB && mv *.deb neovim.deb
+
+FROM debian:sid
+
+RUN apt-get update
+RUN apt-get install -y ripgrep nodejs gcc make golang git fzf npm zip unzip\
+  curl wget tar openjdk-24-jre-headless tree-sitter-cli python3-venv
+
+COPY --from=builder /workspace/neovim/build/neovim.deb /root/packages/neovim.deb
+RUN apt-get install -y /root/packages/neovim.deb
 
 COPY . /root/.config/nvim
 
