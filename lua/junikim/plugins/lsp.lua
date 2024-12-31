@@ -94,16 +94,17 @@ return {
     config = function()
       local conform = require("conform")
       local prettier = { "prettierd", "prettier", stop_after_first = true }
+      local prettier_eslint = { "eslint_d", "prettierd" }
       conform.setup({
         formatters_by_ft = {
           lua = { "stylua" },
           python = { "black" },
           go = { "gofmt" },
-          javascript = prettier,
-          typescript = prettier,
-          javascriptreact = prettier,
-          typescriptreact = prettier,
-          svelte = prettier,
+          javascript = prettier_eslint,
+          typescript = prettier_eslint,
+          javascriptreact = prettier_eslint,
+          typescriptreact = prettier_eslint,
+          svelte = prettier_eslint,
           css = prettier,
           html = prettier,
           json = prettier,
