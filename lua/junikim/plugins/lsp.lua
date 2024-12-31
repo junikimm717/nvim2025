@@ -206,20 +206,8 @@ return {
 
       local lsp_capabilities = require("cmp_nvim_lsp").default_capabilities()
 
+      require("mason").setup()
       require("mason-lspconfig").setup({
-        ensure_installed = {
-          -- language servers
-          "tailwindcss",
-          "ts_ls",
-          "texlab",
-          "pyright",
-          "ltex",
-          "jsonls",
-          "lua_ls",
-          "marksman",
-          "gopls",
-        },
-        automatic_installation = true,
         handlers = {
           -- this first function is the "default handler"
           -- it applies to every language server without a "custom handler"
@@ -233,6 +221,17 @@ return {
 
       require("mason-tool-installer").setup({
         ensure_installed = {
+          -- language servers
+          "tailwindcss",
+          "ts_ls",
+          "texlab",
+          "pyright",
+          "ltex",
+          "jsonls",
+          "lua_ls",
+          "marksman",
+          "gopls",
+          -- linters and formatters
           "prettierd",
           "black",
           "pylint",

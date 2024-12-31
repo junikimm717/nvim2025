@@ -1,4 +1,4 @@
-vim.opt.mouse:append('a')
+vim.opt.mouse:append("a")
 vim.opt.guicursor = ""
 vim.opt.number = true
 vim.opt.linebreak = true
@@ -17,17 +17,17 @@ vim.opt.conceallevel = 1
 -- vim.o.sms = true
 
 -- ufo config stuff?
-vim.o.foldcolumn = '1'   -- '0' is not bad
-vim.o.foldlevel = 99     -- Using ufo provider need a large value, feel free to decrease the value
+vim.o.foldcolumn = "1" -- '0' is not bad
+vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
 vim.o.foldlevelstart = 99
 vim.o.foldenable = true
 
 vim.opt.splitbelow = false
 vim.opt.splitright = false
 
-vim.g.indentLine_fileTypeExclude = { 'text', 'tex' }
+vim.g.indentLine_fileTypeExclude = { "text", "tex" }
 
-vim.opt.undodir = vim.fn.stdpath('data') .. "/undodir"
+vim.opt.undodir = vim.fn.stdpath("data") .. "/undodir"
 vim.opt.undofile = true
 vim.opt.hlsearch = false
 vim.opt.incsearch = true
@@ -45,36 +45,32 @@ vim.api.nvim_create_autocmd("FileType", {
   pattern = "python",
   callback = function(args)
     vim.bo.textwidth = 0
-    vim.bo.formatprg = "autopep8"
     vim.bo.shiftwidth = 4
     vim.bo.tabstop = 4
     vim.bo.softtabstop = 4
-  end
+  end,
 })
 
-vim.api.nvim_create_autocmd(
-  { "BufRead", "BufNewFile" },
-  {
-    pattern = { "*.ms", "*.me", "*.mom" },
-    callback = function(args)
-      vim.bo.filetype = "groff"
-    end
-  }
-)
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  pattern = { "*.ms", "*.me", "*.mom" },
+  callback = function(args)
+    vim.bo.filetype = "groff"
+  end,
+})
 
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "tex", "text" },
   callback = function(args)
     vim.o.smarttab = false
     vim.bo.autoindent = false
-  end
+  end,
 })
 
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "c", "cpp", "slang" },
   callback = function(args)
     vim.bo.cindent = true
-  end
+  end,
 })
 
 vim.api.nvim_create_autocmd("FileType", {
@@ -84,7 +80,7 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.bo.tabstop = 2
     vim.bo.softtabstop = 2
     vim.bo.autoindent = true
-  end
+  end,
 })
 
 vim.api.nvim_create_autocmd("FileType", {
@@ -96,5 +92,10 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.bo.softtabstop = 4
     vim.bo.preserveindent = true
     vim.bo.copyindent = true
-  end
+  end,
 })
+
+vim.api.nvim_create_user_command("FullSetup", function()
+  vim.cmd([[:TSUpdateSync]])
+  require("mason-tool-installer").check_install(false, true)
+end, { desc = "Setup Mason and Treesitter" })
