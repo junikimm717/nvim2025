@@ -105,6 +105,7 @@ return {
           javascriptreact = prettier_eslint,
           typescriptreact = prettier_eslint,
           svelte = prettier_eslint,
+          astro = prettier,
           css = prettier,
           html = prettier,
           json = prettier,
@@ -120,6 +121,38 @@ return {
           async = true,
         })
       end)
+    end,
+  },
+
+  {
+    "mfussenegger/nvim-lint",
+    event = { "BufReadPre", "BufNewFile" },
+    config = function()
+      local lint = require("lint")
+
+      lint.linters_by_ft = {
+        javascript = { "eslint_d" },
+        typescript = { "eslint_d" },
+        javascriptreact = { "eslint_d" },
+        typescriptreact = { "eslint_d" },
+        svelte = { "eslint_d" },
+        python = { "pylint" },
+        bash = { "shellcheck" },
+        sh = { "shellcheck" },
+      }
+
+      local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
+
+      vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
+        group = lint_augroup,
+        callback = function()
+          lint.try_lint()
+        end,
+      })
+
+      vim.keymap.set("n", "<leader>l", function()
+        lint.try_lint()
+      end, { desc = "Trigger linting for current file" })
     end,
   },
 
@@ -182,7 +215,6 @@ return {
           "pyright",
           "ltex",
           "jsonls",
-          "bashls",
           "lua_ls",
           "marksman",
           "gopls",
@@ -206,6 +238,7 @@ return {
           "pylint",
           "eslint_d",
           "stylua",
+          "shellcheck",
         },
       })
     end,
@@ -215,10 +248,14 @@ return {
     -- follow latest release.
     version = "v2.*",
     build = "make install_jsregexp",
+    dependencies = {
+      "rafamadriz/friendly-snippets",
+    },
     config = function()
       require("luasnip.loaders.from_snipmate").lazy_load({
         paths = { "./lua/junikim/snippets" },
       })
+      require("luasnip.loaders.from_vscode").lazy_load()
     end,
   },
 }
