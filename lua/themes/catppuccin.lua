@@ -8,32 +8,17 @@ return {
     config = function()
       require('catppuccin').setup {
         transparent_background = true,
+        styles = {
+          strings = { "italic" },
+          comments = { "italic" },
+          operators = { "italic" },
+          conditionals = { "italic" },
+          loops = { "italic" },
+          types = { "bold" },
+          functions = {},
+        },
       }
-
-      local day = 9
-      local night = 18
-      local hour = os.date("*t").hour
-
-      local themes = { "catppuccin-macchiato", "catppuccin-mocha" }
-      local theme = 1
-
-      if day <= hour and hour < night then
-        theme = 1
-      else
-        theme = 2
-      end
-      vim.cmd.colorscheme(themes[theme])
-
-      local function toggletheme()
-        if theme == 1 then
-          theme = 2
-        else
-          theme = 1
-        end
-        vim.cmd.colorscheme(themes[theme])
-      end
-
-      vim.api.nvim_create_user_command("ToggleTheme", toggletheme, {})
+      vim.cmd.colorscheme("catppuccin-mocha")
     end,
   },
 
