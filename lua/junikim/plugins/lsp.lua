@@ -199,7 +199,8 @@ return {
       autoformat = false,
     },
     config = function()
-      local lsp_defaults = require("lspconfig").util.default_config
+      local lspconfig = require("lspconfig")
+      local lsp_defaults = lspconfig.util.default_config
 
       -- Add cmp_nvim_lsp capabilities settings to lspconfig
       -- This should be executed before you configure any language server
@@ -236,7 +237,7 @@ return {
           -- this first function is the "default handler"
           -- it applies to every language server without a "custom handler"
           function(server_name)
-            require("lspconfig")[server_name].setup({
+            lspconfig[server_name].setup({
               capabilities = lsp_capabilities,
               cmd_env = {
                 NODE_OPTIONS = "--max-old-space-size=4096",
@@ -245,6 +246,13 @@ return {
           end,
         },
       })
+
+      local installed = require("mason-registry").is_installed
+      if not installed("clangd") and vim.fn.executable("clangd") then
+        lspconfig.clangd.setup({
+          capabilities = lsp_capabilities,
+        })
+      end
 
       require("mason-tool-installer").setup({
         ensure_installed = {
