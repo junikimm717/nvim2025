@@ -9,7 +9,7 @@ RUN curl -LJ https://github.com/neovim/neovim/archive/refs/tags/nightly.tar.gz\
   && mv neovim-nightly neovim
 
 WORKDIR /workspace/neovim
-RUN make CMAKE_BUILD_TYPE=Release
+RUN make CMAKE_BUILD_TYPE=RelWithDebInfo
 RUN cd build && cpack -G DEB && mv *.deb neovim.deb
 
 FROM debian:sid
