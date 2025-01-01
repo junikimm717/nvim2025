@@ -104,7 +104,7 @@ return {
       conform.setup({
         formatters_by_ft = {
           lua = { "stylua" },
-          python = { "black" },
+          python = { "black", "autopep8", stop_after_first = true },
           go = { "gofmt" },
           javascript = prettier_eslint,
           typescript = prettier_eslint,
@@ -119,6 +119,7 @@ return {
           markdown = prettier,
           graphql = prettier,
           nix = { "nixfmt" },
+          cpp = { "clang-format" },
         },
       })
       vim.keymap.set({ "n", "v" }, "<leader>ft", function()
@@ -133,18 +134,33 @@ return {
   {
     "mfussenegger/nvim-lint",
     event = { "BufReadPre", "BufNewFile" },
+    dependencies = {
+      { "williamboman/mason.nvim" },
+    },
     config = function()
       local lint = require("lint")
 
+      local installed = require("mason-registry").is_installed
+
+      local filter = function(pkgs)
+        for i = 1, #pkgs do
+          if installed(pkgs[i]) then
+            return { pkgs[i] }
+          end
+        end
+        return {}
+      end
+
       lint.linters_by_ft = {
-        javascript = { "eslint_d" },
-        typescript = { "eslint_d" },
-        javascriptreact = { "eslint_d" },
-        typescriptreact = { "eslint_d" },
-        svelte = { "eslint_d" },
-        python = { "pylint" },
-        bash = { "shellcheck" },
-        sh = { "shellcheck" },
+        javascript = filter({ "eslint_d" }),
+        typescript = filter({ "eslint_d" }),
+        javascriptreact = filter({ "eslint_d" }),
+        typescriptreact = filter({ "eslint_d" }),
+        svelte = filter({ "eslint_d" }),
+        python = filter({ "pylint", "flake8" }),
+        bash = filter({ "shellcheck" }),
+        sh = filter({ "shellcheck" }),
+        cpp = filter({ "cpplint" }),
       }
 
       local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
