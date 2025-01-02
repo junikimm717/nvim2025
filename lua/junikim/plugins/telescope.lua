@@ -10,13 +10,6 @@ return {
     local builtin = require("telescope.builtin")
     local path = require("plenary.path")
     require('telescope').setup {
-      pickers = {
-        find_files = { theme = "ivy" },
-        git_files = { theme = "ivy" },
-        buffers = { theme = "ivy" },
-        help_tags = { theme = "ivy" },
-        live_grep = { theme = "ivy" },
-      },
       extensions = {
         fzf = {},
       }
