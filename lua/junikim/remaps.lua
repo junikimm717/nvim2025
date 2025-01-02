@@ -1,17 +1,10 @@
 vim.g.mapleader = " "
 
-vim.keymap.set("n", "<C-h>", "<C-w>h")
 vim.keymap.set("n", "<C-j>", "<C-w>j")
 vim.keymap.set("n", "<C-k>", "<C-w>k")
 vim.keymap.set("n", "<C-l>", "<C-w>l")
+vim.keymap.set("n", "<C-h>", "<C-w>h")
 
-vim.keymap.set("i", "<A-a>", "ā")
-vim.keymap.set("i", "<A-e>", "ē")
-vim.keymap.set("i", "<A-i>", "ī")
-vim.keymap.set("i", "<A-o>", "ō")
-vim.keymap.set("i", "<A-u>", "ū")
-
-vim.keymap.set("n", "<F12>", ":w|:!texbld run compile<CR>")
 vim.keymap.set("n", "<F5>", ":w|:!./test.sh<CR>")
 
 -- hacks
