@@ -10,6 +10,11 @@ return {
     local builtin = require("telescope.builtin")
     local path = require("plenary.path")
     require("telescope").setup({
+      pickers = {
+        buffers = {
+          theme = "dropdown",
+        }
+      },
       extensions = {
         fzf = {},
       },
