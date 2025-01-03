@@ -9,34 +9,8 @@ return {
       require('gruvbox').setup {
         transparent_mode = true,
       }
-
-      local day = 9
-      local night = 18
-      local hour = os.date("*t").hour
-
-      local themes = { "gruvbox", "gruvbox" }
-      local theme = 1
-
-      if day <= hour and hour < night then
-        theme = 1
-      else
-        theme = 2
-      end
-      vim.cmd.colorscheme(themes[theme])
-      vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-      vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
-
-      local function toggletheme()
-        if theme == 1 then
-          theme = 2
-          vim.cmd('set background=dark')
-        else
-          theme = 1
-          vim.cmd('set background=light')
-        end
-      end
-
-      vim.api.nvim_create_user_command("ToggleTheme", toggletheme, {})
+      vim.cmd.colorscheme("gruvbox")
+      vim.opt.background = "dark"
     end,
   },
 
@@ -56,7 +30,7 @@ return {
         lualine_b = { 'branch', 'diff', 'diagnostics' },
         lualine_c = { 'filename' },
         lualine_x = { 'encoding', 'fileformat', 'filetype' },
-        lualine_y = { require('themes.utils').getWords },
+        lualine_y = { require('junikim.utils').getWords },
       },
     }
   },

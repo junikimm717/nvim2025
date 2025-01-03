@@ -24,7 +24,7 @@ RUN apt-get install -y /root/packages/neovim.deb
 COPY . /root/.config/nvim
 
 WORKDIR /workspace
-RUN echo 'return require("themes.container")' > /root/.config/nvim/lua/themes/init.lua
+RUN echo 'return require("configs.container")' > /root/.config/nvim/lua/configs/init.lua
 RUN nvim --headless +Lazy! sync +FullSetup +qa
 
 CMD ["/bin/bash"]

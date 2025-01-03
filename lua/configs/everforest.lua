@@ -1,24 +1,17 @@
 return {
   {
-    "catppuccin/nvim",
+    "neanias/everforest-nvim",
     version = false,
     lazy = false,
     priority = 1000, -- make sure to load this before all the other start plugins
     -- Optional; default configuration will be used if setup isn't called.
     config = function()
-      require('catppuccin').setup {
-        transparent_background = true,
-        styles = {
-          strings = { "italic" },
-          comments = { "italic" },
-          operators = { "italic" },
-          conditionals = { "italic" },
-          loops = { "italic" },
-          types = { "bold" },
-          functions = {},
-        },
-      }
-      vim.cmd.colorscheme("catppuccin-mocha")
+      require("everforest").setup({
+        -- Your config here
+        transparent_background_level = 1,
+        background = "medium",
+      })
+      vim.cmd.colorscheme 'everforest'
     end,
   },
 
@@ -40,7 +33,7 @@ return {
         lualine_b = { 'branch', 'diff', 'diagnostics' },
         lualine_c = { 'filename' },
         lualine_x = { 'encoding', 'fileformat', 'filetype' },
-        lualine_y = { require('themes.utils').getWords },
+        lualine_y = { require('junikim.utils').getWords },
       },
     }
   },
