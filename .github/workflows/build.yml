@@ -28,3 +28,5 @@ jobs:
           context: .
           push: true
           tags: junikimm717/nvim2025:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
