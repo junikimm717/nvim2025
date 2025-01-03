@@ -96,8 +96,8 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 vim.api.nvim_create_autocmd("TermOpen", {
-  callback = function (args)
+  callback = function(args)
     vim.opt.number = false
     vim.opt.relativenumber = false
-  end
+  end,
 })

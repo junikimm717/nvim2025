@@ -1,20 +1,20 @@
 return {
-  'nvim-telescope/telescope.nvim',
-  tag = '0.1.8',
+  "nvim-telescope/telescope.nvim",
+  tag = "0.1.8",
   dependencies = {
-    'nvim-lua/plenary.nvim',
-    { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
-    'nvim-tree/nvim-web-devicons',
+    "nvim-lua/plenary.nvim",
+    { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+    "nvim-tree/nvim-web-devicons",
   },
   config = function()
     local builtin = require("telescope.builtin")
     local path = require("plenary.path")
-    require('telescope').setup {
+    require("telescope").setup({
       extensions = {
         fzf = {},
-      }
-    }
-    require('telescope').load_extension('fzf')
+      },
+    })
+    require("telescope").load_extension("fzf")
 
     local function git_exists()
       local p = "."
@@ -33,16 +33,16 @@ return {
       end
     end
 
-    vim.keymap.set('n', '<C-P>', function()
+    vim.keymap.set("n", "<C-P>", function()
       if git_exists() then
         builtin.git_files()
       else
         builtin.find_files()
       end
     end, {})
-    vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
-    vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
-    vim.keymap.set('n', '<leader>fa', builtin.buffers, {})
-    vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
-  end
+    vim.keymap.set("n", "<leader>ff", builtin.find_files, {})
+    vim.keymap.set("n", "<leader>fg", builtin.live_grep, {})
+    vim.keymap.set("n", "<leader>fa", builtin.buffers, {})
+    vim.keymap.set("n", "<leader>fh", builtin.help_tags, {})
+  end,
 }

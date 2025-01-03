@@ -1,15 +1,15 @@
 return {
-  'kevinhwang91/nvim-ufo',
+  "kevinhwang91/nvim-ufo",
   dependencies = {
-    { 'kevinhwang91/promise-async' },
+    { "kevinhwang91/promise-async" },
   },
   config = function()
     -- Using ufo provider need remap `zR` and `zM`. If Neovim is 0.6.1, remap yourself
-    vim.keymap.set('n', 'zR', require('ufo').openAllFolds)
-    vim.keymap.set('n', 'zM', require('ufo').closeAllFolds)
+    vim.keymap.set("n", "zR", require("ufo").openAllFolds)
+    vim.keymap.set("n", "zM", require("ufo").closeAllFolds)
     local virt_handler = function(virtText, lnum, endLnum, width, truncate)
       local newVirtText = {}
-      local suffix = (' 󰁂 %d '):format(endLnum - lnum)
+      local suffix = (" 󰁂 %d "):format(endLnum - lnum)
       local sufWidth = vim.fn.strdisplaywidth(suffix)
       local targetWidth = width - sufWidth
       local curWidth = 0
@@ -25,23 +25,23 @@ return {
           chunkWidth = vim.fn.strdisplaywidth(chunkText)
           -- str width returned from truncate() may less than 2nd argument, need padding
           if curWidth + chunkWidth < targetWidth then
-            suffix = suffix .. (' '):rep(targetWidth - curWidth - chunkWidth)
+            suffix = suffix .. (" "):rep(targetWidth - curWidth - chunkWidth)
           end
           break
         end
         curWidth = curWidth + chunkWidth
       end
-      table.insert(newVirtText, { suffix, 'MoreMsg' })
+      table.insert(newVirtText, { suffix, "MoreMsg" })
       return newVirtText
     end
     -- Option 3: treesitter as a main provider instead
     -- Only depend on `nvim-treesitter/queries/filetype/folds.scm`,
     -- performance and stability are better than `foldmethod=nvim_treesitter#foldexpr()`
-    require('ufo').setup({
+    require("ufo").setup({
       provider_selector = function(bufnr, filetype, buftype)
-        return { 'treesitter', 'indent' }
+        return { "treesitter", "indent" }
       end,
       fold_virt_text_handler = virt_handler,
     })
-  end
+  end,
 }

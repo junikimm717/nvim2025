@@ -29,7 +29,6 @@ vim.keymap.set("n", "<leader>X", "<cmd>!chmod -x %<CR>", { silent = true })
 vim.keymap.set("n", "<leader>r", "<cmd>so ~/.config/nvim/init.lua<CR>")
 vim.keymap.set("n", "<leader>e", "<cmd>!%:p<CR>", { silent = true })
 
-
 if os.getenv("TMUX") ~= nil then
   vim.keymap.set("n", "<C-f>", [[<cmd>silent !tmux neww tmuxs\; setenv WORKSPACES $WORKSPACES \;<CR>]])
 else

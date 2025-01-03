@@ -15,42 +15,46 @@ return {
 
       local tab = 1
       while tab <= 9 do
-        vim.keymap.set('n', '<leader>' .. tab, selector(tab))
+        vim.keymap.set("n", "<leader>" .. tab, selector(tab))
         tab = tab + 1
       end
-      vim.keymap.set('n', '<leader>a', selector(1))
-      vim.keymap.set('n', '<leader>s', selector(2))
-      vim.keymap.set('n', '<leader>d', selector(3))
+      vim.keymap.set("n", "<leader>a", selector(1))
+      vim.keymap.set("n", "<leader>s", selector(2))
+      vim.keymap.set("n", "<leader>d", selector(3))
 
-      vim.keymap.set("n", "<leader>p", function() harpoon:list():add() end)
+      vim.keymap.set("n", "<leader>p", function()
+        harpoon:list():add()
+      end)
       vim.keymap.set("n", "<leader>c", function()
         if vim.bo.modified then
           local choice = vim.fn.confirm(("Save changes to %q?"):format(vim.fn.bufname()), "&Yes\n&No\n&Cancel")
           if choice == 1 then
             vim.cmd.write()
-            vim.cmd('bd')
+            vim.cmd("bd")
           elseif choice == 2 then
-            vim.cmd('bd!')
+            vim.cmd("bd!")
           end
         else
-          vim.cmd('bd')
+          vim.cmd("bd")
         end
       end)
       vim.keymap.set("n", "<leader>q", function()
-        vim.cmd('bd!')
+        vim.cmd("bd!")
       end)
       vim.keymap.set("n", "ZB", function()
-        vim.cmd('bd!')
+        vim.cmd("bd!")
       end)
-      vim.keymap.set("n", "<leader>h", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
-    end
+      vim.keymap.set("n", "<leader>h", function()
+        harpoon.ui:toggle_quick_menu(harpoon:list())
+      end)
+    end,
   },
   {
     "romgrk/barbar.nvim",
     dependencies = {
       "ThePrimeagen/harpoon",
-      'lewis6991/gitsigns.nvim',
-      'nvim-tree/nvim-web-devicons'
+      "lewis6991/gitsigns.nvim",
+      "nvim-tree/nvim-web-devicons",
     },
     config = function()
       local barbar = require("barbar")
@@ -119,7 +123,7 @@ return {
     end,
   },
   {
-    'stevearc/oil.nvim',
+    "stevearc/oil.nvim",
     ---@module 'oil'
     ---@type oil.SetupOpts
     opts = {},
@@ -127,6 +131,6 @@ return {
     config = function()
       require("oil").setup()
       vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
-    end
-  }
+    end,
+  },
 }

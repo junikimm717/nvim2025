@@ -1,4 +1,5 @@
-return {
+local M = {}
+M.pkgs = {
   {
     "neanias/everforest-nvim",
     version = false,
@@ -11,30 +12,31 @@ return {
         transparent_background_level = 1,
         background = "medium",
       })
-      vim.cmd.colorscheme 'everforest'
+      vim.cmd.colorscheme("everforest")
     end,
   },
 
   {
-    'nvim-lualine/lualine.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    "nvim-lualine/lualine.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
     init = function()
       vim.opt.laststatus = 3
     end,
     opts = {
       options = {
         icons_enabled = true,
-        theme = 'auto',
-        section_separators = { left = '', right = '' },
-        component_separators = { left = '', right = '' },
+        theme = "auto",
+        section_separators = { left = "", right = "" },
+        component_separators = { left = "", right = "" },
       },
       sections = {
-        lualine_a = { 'mode' },
-        lualine_b = { 'branch', 'diff', 'diagnostics' },
-        lualine_c = { 'filename' },
-        lualine_x = { 'encoding', 'fileformat', 'filetype' },
-        lualine_y = { require('junikim.utils').getWords },
+        lualine_a = { "mode" },
+        lualine_b = { "branch", "diff", "diagnostics" },
+        lualine_c = { "filename" },
+        lualine_x = { "encoding", "fileformat", "filetype" },
+        lualine_y = { require("junikim.utils").getWords },
       },
-    }
+    },
   },
 }
+return M
