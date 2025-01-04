@@ -189,18 +189,17 @@ return {
       { "williamboman/mason-lspconfig.nvim" },
       { "WhoIsSethDaniel/mason-tool-installer.nvim" },
       { "L3MON4D3/LuaSnip" },
+      { "nvim-telescope/telescope.nvim" },
     },
     init = function()
       -- Reserve a space in the gutter
       -- This will avoid an annoying layout shift in the screen
       vim.opt.signcolumn = "yes"
     end,
-    opts = {
-      autoformat = false,
-    },
     config = function()
       local lspconfig = require("lspconfig")
       local lsp_defaults = lspconfig.util.default_config
+      local builtin = require("telescope.builtin")
 
       -- Add cmp_nvim_lsp capabilities settings to lspconfig
       -- This should be executed before you configure any language server
@@ -215,11 +214,11 @@ return {
           local opts = { buffer = event.buf }
 
           vim.keymap.set("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
-          vim.keymap.set("n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
+          vim.keymap.set("n", "gd", builtin.lsp_definitions, opts)
           vim.keymap.set("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
-          vim.keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
-          vim.keymap.set("n", "go", "<cmd>lua vim.lsp.buf.type_definition()<cr>", opts)
-          vim.keymap.set("n", "gr", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
+          vim.keymap.set("n", "gi", builtin.lsp_implementations, opts)
+          vim.keymap.set("n", "go", builtin.lsp_type_definitions, opts)
+          vim.keymap.set("n", "gr", builtin.lsp_references, opts)
           vim.keymap.set("n", "gs", "<cmd>lua vim.lsp.buf.signature_help()<cr>", opts)
           vim.keymap.set("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
           vim.keymap.set("n", "<F4>", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)

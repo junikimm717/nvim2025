@@ -8,12 +8,15 @@ return {
   },
   config = function()
     local builtin = require("telescope.builtin")
-    local path = require("plenary.path")
     require("telescope").setup({
       pickers = {
-        buffers = {
-          theme = "dropdown",
-        }
+        buffers = { theme = "dropdown" },
+        find_files = { theme = "dropdown" },
+        git_files = { theme = "dropdown" },
+        lsp_references = { theme = "ivy" },
+        lsp_definitions = { theme = "ivy" },
+        lsp_implementations = { theme = "ivy" },
+        lsp_type_definitions = { theme = "ivy" },
       },
       extensions = {
         fzf = {},
@@ -21,25 +24,8 @@ return {
     })
     require("telescope").load_extension("fzf")
 
-    local function git_exists()
-      local p = "."
-      while true do
-        local gitpath = p .. "/.git"
-        local d = io.open(gitpath)
-        if d then
-          d:close()
-          return true
-        else
-          p = p .. "/.."
-        end
-        if path:new(p):absolute() == "/" then
-          return false
-        end
-      end
-    end
-
     vim.keymap.set("n", "<C-P>", function()
-      if git_exists() then
+      if vim.fs.root(0, ".git") then
         builtin.git_files()
       else
         builtin.find_files()
