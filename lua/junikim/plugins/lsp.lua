@@ -162,7 +162,7 @@ return {
 
       local filter = function(linters)
         local res = {}
-        for filetype, pkgs in ipairs(linters) do
+        for filetype, pkgs in pairs(linters) do
           local available = {}
           for _, linter in ipairs(pkgs) do
             local binary = eval_fn_or_id(lint.linters[linter].cmd)
