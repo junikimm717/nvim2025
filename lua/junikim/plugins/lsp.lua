@@ -112,7 +112,7 @@ return {
     config = function()
       local conform = require("conform")
       local prettier = { "prettierd", "prettier", stop_after_first = true }
-      local prettier_eslint = { "eslint_d", "prettierd" }
+      local prettier_eslint = { "eslint_d", "prettierd", "rustywind" }
       conform.setup({
         formatters_by_ft = {
           lua = { "stylua" },
@@ -284,6 +284,7 @@ return {
           "eslint_d",
           "stylua",
           "shellcheck",
+          "rustywind",
         },
       })
     end,
