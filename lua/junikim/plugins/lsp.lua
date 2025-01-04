@@ -152,28 +152,40 @@ return {
     config = function()
       local lint = require("lint")
 
-      local installed = require("mason-registry").is_installed
-
-      local filter = function(pkgs)
-        for i = 1, #pkgs do
-          if installed(pkgs[i]) then
-            return { pkgs[i] }
-          end
+      local function eval_fn_or_id(x)
+        if type(x) == "function" then
+          return x()
+        else
+          return x
         end
-        return {}
       end
 
-      lint.linters_by_ft = {
-        javascript = filter({ "eslint_d" }),
-        typescript = filter({ "eslint_d" }),
-        javascriptreact = filter({ "eslint_d" }),
-        typescriptreact = filter({ "eslint_d" }),
-        svelte = filter({ "eslint_d" }),
-        python = filter({ "pylint", "flake8" }),
-        bash = filter({ "shellcheck" }),
-        sh = filter({ "shellcheck" }),
-        cpp = filter({ "cpplint" }),
-      }
+      local filter = function(linters)
+        local res = {}
+        for filetype, pkgs in ipairs(linters) do
+          local available = {}
+          for _, linter in ipairs(pkgs) do
+            local binary = eval_fn_or_id(lint.linters[linter].cmd)
+            if vim.fn.executable(binary) == 1 then
+              table.insert(available, linter)
+            end
+          end
+          res[filetype] = available
+        end
+        return res
+      end
+
+      lint.linters_by_ft = filter({
+        javascript = { "eslint_d" },
+        typescript = { "eslint_d" },
+        javascriptreact = { "eslint_d" },
+        typescriptreact = { "eslint_d" },
+        svelte = { "eslint_d" },
+        python = { "pylint", "flake8" },
+        bash = { "shellcheck" },
+        sh = { "shellcheck" },
+        cpp = { "cpplint" },
+      })
 
       local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
 
@@ -276,7 +288,6 @@ return {
           "jsonls",
           "lua_ls",
           "marksman",
-          "gopls",
           -- linters and formatters
           "prettierd",
           "black",
