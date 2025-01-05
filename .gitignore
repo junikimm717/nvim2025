@@ -1,2 +1,4 @@
 /lazy-lock.json
 .DS_Store
+/lua/configs/init.lua
+/lua/themes/init.lua
