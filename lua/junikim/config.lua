@@ -1,6 +1,7 @@
 ---@class Config
 ---@field lazy table
 ---@field mason table
+---@field treesitter table
 local config = {
   mason = {
     -- language servers
@@ -22,6 +23,30 @@ local config = {
     "rustywind",
   },
   lazy = require("themes.gruvbox"),
+  treesitter = {
+    "c",
+    "cpp",
+    "rust",
+    "javascript",
+    "typescript",
+    "tsx",
+    "json",
+    "html",
+    "latex",
+    "bash",
+    "python",
+    "go",
+    "css",
+    "bibtex",
+    "make",
+    "vim",
+    "lua",
+    "markdown",
+    "gitignore",
+    "toml",
+    "yaml",
+    "nix",
+  },
 }
 
 local newconfig = nil
@@ -29,7 +54,7 @@ local success, theme = pcall(require, "configs")
 if not success then
   local filepath = vim.fs.normalize(vim.fs.joinpath(vim.fn.stdpath("config"), "lua", "configs", "init.lua"))
   if vim.fn.filewritable(filepath) then
-    vim.fn.writefile({[[return require("configs.catppuccin")]]}, filepath)
+    vim.fn.writefile({ [[return require("configs.catppuccin")]] }, filepath)
     newconfig = require("configs")
   else
     newconfig = require("configs.catppuccin")

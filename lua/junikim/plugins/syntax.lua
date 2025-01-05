@@ -5,30 +5,7 @@ return {
     main = "nvim-treesitter.configs", -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = {
-        "c",
-        "cpp",
-        "rust",
-        "javascript",
-        "typescript",
-        "tsx",
-        "json",
-        "html",
-        "latex",
-        "bash",
-        "python",
-        "go",
-        "css",
-        "bibtex",
-        "make",
-        "vim",
-        "lua",
-        "markdown",
-        "gitignore",
-        "toml",
-        "yaml",
-        "nix",
-      },
+      ensure_installed = require("junikim.config").treesitter,
       -- Autoinstall languages that are not installed
       auto_install = true,
       sync_install = false,

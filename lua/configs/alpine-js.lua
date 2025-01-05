@@ -12,4 +12,17 @@ return {
     "rustywind",
   },
   lazy = require("themes.tokyonight"),
+  treesitter = {
+    "javascript",
+    "typescript",
+    "tsx",
+    "json",
+    "html",
+    "css",
+    "bibtex",
+    "markdown",
+    "gitignore",
+    "toml",
+    "yaml",
+  }
 }
