@@ -12,9 +12,14 @@ vim.opt.autoindent = true
 vim.opt.textwidth = 80
 vim.opt.colorcolumn = "80"
 vim.opt.list = true
+vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
+vim.opt.showmode = false
+vim.opt.timeoutlen = 250
+vim.opt.breakindent = true
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
 vim.opt.wrap = false
 vim.opt.conceallevel = 1
--- vim.o.sms = true
 
 -- ufo config stuff?
 vim.o.foldcolumn = "1" -- '0' is not bad
@@ -22,15 +27,16 @@ vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decr
 vim.o.foldlevelstart = 99
 vim.o.foldenable = true
 
-vim.opt.splitbelow = false
-vim.opt.splitright = false
+vim.opt.splitbelow = true
+vim.opt.splitright = true
 
 vim.g.indentLine_fileTypeExclude = { "text", "tex" }
 
 vim.opt.undodir = vim.fn.stdpath("data") .. "/undodir"
 vim.opt.undofile = true
-vim.opt.hlsearch = false
+vim.opt.hlsearch = true
 vim.opt.incsearch = true
+vim.opt.inccommand = 'split'
 
 vim.opt.nu = true
 vim.opt.rnu = true
