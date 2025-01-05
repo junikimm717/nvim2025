@@ -23,7 +23,7 @@ RUN apt-get install -y ripgrep nodejs gcc make golang git fzf npm zip unzip\
 COPY . /root/.config/nvim
 
 WORKDIR /workspace
-RUN echo 'return require("configs.container")' > /root/.config/nvim/lua/configs/init.lua
+RUN echo 'return require("configs.debian")' > /root/.config/nvim/lua/configs/init.lua
 RUN nvim --headless +Lazy! sync +FullSetup +qa
 
 CMD ["/bin/bash"]

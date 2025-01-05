@@ -1,21 +1,24 @@
-local M = {}
-
--- full setup command here (container specific)
-vim.api.nvim_create_user_command("FullSetup", function()
-  require("mason-tool-installer").check_install(false, true)
-  vim.cmd([[:TSUpdateSync]])
-end, { desc = "Setup Mason and Treesitter" })
-
-M.pkgs = {
+return {
   {
-    "folke/tokyonight.nvim",
+    "catppuccin/nvim",
     version = false,
     lazy = false,
     priority = 1000, -- make sure to load this before all the other start plugins
     -- Optional; default configuration will be used if setup isn't called.
     config = function()
-      require("tokyonight").setup({})
-      vim.cmd.colorscheme("tokyonight")
+      require("catppuccin").setup({
+        transparent_background = true,
+        styles = {
+          strings = { "italic" },
+          comments = { "italic" },
+          operators = { "italic" },
+          conditionals = { "italic" },
+          loops = { "italic" },
+          types = { "bold" },
+          functions = {},
+        },
+      })
+      vim.cmd.colorscheme("catppuccin-mocha")
     end,
   },
 
@@ -29,8 +32,8 @@ M.pkgs = {
       options = {
         icons_enabled = true,
         theme = "auto",
-        section_separators = { left = "", right = "" },
-        component_separators = { left = "", right = "" },
+        section_separators = { left = "", right = "" },
+        component_separators = { left = "", right = "" },
       },
       sections = {
         lualine_a = { "mode" },
@@ -42,5 +45,3 @@ M.pkgs = {
     },
   },
 }
-
-return M

@@ -276,34 +276,12 @@ return {
           capabilities = lsp_capabilities,
         })
       end
-
-      require("mason-tool-installer").setup({
-        ensure_installed = {
-          -- language servers
-          "tailwindcss",
-          "ts_ls",
-          "texlab",
-          "pyright",
-          "ltex",
-          "jsonls",
-          "lua_ls",
-          "marksman",
-          -- linters and formatters
-          "prettierd",
-          "black",
-          "pylint",
-          "eslint_d",
-          "stylua",
-          "shellcheck",
-          "rustywind",
-        },
-      })
     end,
   },
   {
     "L3MON4D3/LuaSnip",
     -- follow latest release.
-    version = "v2.*",
+    version = "v2.3",
     build = "make install_jsregexp",
     dependencies = {
       "rafamadriz/friendly-snippets",

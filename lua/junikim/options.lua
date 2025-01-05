@@ -101,3 +101,13 @@ vim.api.nvim_create_autocmd("TermOpen", {
     vim.opt.relativenumber = false
   end,
 })
+
+-- full setup command here (container specific)
+vim.api.nvim_create_user_command("FullSetup", function()
+  local is_headless = #vim.api.nvim_list_uis() == 0
+  if not is_headless then
+    vim.api.nvim_err_writeln("Cannot execute FullSetup in non-headless mode")
+  end
+  require("mason.api.command").MasonInstall(require("junikim.config").mason)
+  vim.cmd([[:TSUpdateSync]])
+end, { desc = "Setup Mason and Treesitter" })
