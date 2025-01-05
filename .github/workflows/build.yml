@@ -49,6 +49,7 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           context: .
+          file: alpine-js.Dockerfile
           push: true
           tags: junikimm717/nvim2025:alpine-js
           cache-from: type=gha
