@@ -27,8 +27,8 @@ vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decr
 vim.o.foldlevelstart = 99
 vim.o.foldenable = true
 
-vim.opt.splitbelow = true
-vim.opt.splitright = true
+vim.opt.splitbelow = false
+vim.opt.splitright = false
 
 vim.g.indentLine_fileTypeExclude = { "text", "tex" }
 
@@ -36,7 +36,7 @@ vim.opt.undodir = vim.fn.stdpath("data") .. "/undodir"
 vim.opt.undofile = true
 vim.opt.hlsearch = true
 vim.opt.incsearch = true
-vim.opt.inccommand = 'split'
+vim.opt.inccommand = "split"
 
 vim.opt.nu = true
 vim.opt.rnu = true
