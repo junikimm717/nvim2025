@@ -1,7 +1,20 @@
 # Juni's 2025 Neovim Config
 
-Now with a new plugin manager and theme switching!
-The config should also self-bootstrap itself.
+Now with a new plugin manager and theme switching! The config should also
+self-bootstrap itself.
+
+[Old Config](https://git.junickim.me/junikimm717/nvim2023)
+
+# Docker
+
+```bash
+# full-featured debian container (x86 only)
+docker run --rm -it junikimm717/nvim2025
+# minimal alpine container with JavaScript support (x86 and arm)
+docker run --rm -it junikimm717/nvim2025:alpine-js
+```
+
+# System Installation
 
 ## Requirements
 
@@ -13,7 +26,7 @@ The config should also self-bootstrap itself.
 - Java (for ltex ls)
 - RipGrep
 
-## Additions
+## Additional tools that you may want to use
 
 - Fzf
-- Tmux
+- Tmux and [tmuxs](https://github.com/junikimm717/tmuxs)
