@@ -86,6 +86,8 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.bo.tabstop = 2
     vim.bo.softtabstop = 2
     vim.bo.autoindent = true
+    vim.bo.preserveindent = true
+    vim.bo.copyindent = true
   end,
 })
 
