@@ -16,6 +16,7 @@ local config = {
     -- linters and formatters
     "prettierd",
     "black",
+    "isort",
     "pylint",
     "eslint_d",
     "stylua",

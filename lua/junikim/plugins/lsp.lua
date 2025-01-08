@@ -116,7 +116,7 @@ return {
       conform.setup({
         formatters_by_ft = {
           lua = { "stylua" },
-          python = { "black", "autopep8", stop_after_first = true },
+          python = { "isort", "black" },
           go = { "gofmt" },
           javascript = prettier_eslint,
           typescript = prettier_eslint,
