@@ -1,5 +1,4 @@
 vim.opt.mouse:append("a")
-vim.opt.guicursor = ""
 vim.opt.number = true
 vim.opt.linebreak = true
 vim.opt.shiftwidth = 2
