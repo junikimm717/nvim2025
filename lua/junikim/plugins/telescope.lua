@@ -18,6 +18,15 @@ return {
         lsp_implementations = { theme = "ivy" },
         lsp_type_definitions = { theme = "ivy" },
       },
+      defaults = {
+        file_ignore_patterns = {
+          "node_modules",
+          ".git",
+          "venv",
+          "__pycache__",
+          "vendor",
+        },
+      },
       extensions = {
         fzf = {},
       },
@@ -25,7 +34,7 @@ return {
     require("telescope").load_extension("fzf")
 
     vim.keymap.set("n", "<C-P>", function()
-      if vim.fs.root(0, ".git") then
+      if vim.fs.root(vim.env.PWD, ".git") then
         builtin.git_files()
       else
         builtin.find_files()
