@@ -24,7 +24,11 @@ return {
       vim.keymap.set("n", "<leader>f", selector(4))
 
       vim.keymap.set("n", "<leader>p", function()
-        harpoon:list():add()
+        local name = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
+        -- we need to make sure we don't submit empty buffers or terminal bullshit to harpoon
+        if #name ~= 0 and string.match(name, "://") == nil then
+          harpoon:list():add()
+        end
       end)
       vim.keymap.set("n", "<leader>c", function()
         if vim.bo.modified then
