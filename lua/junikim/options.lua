@@ -1,5 +1,6 @@
 vim.opt.mouse:append("a")
 vim.opt.number = true
+vim.opt.guicursor = ""
 vim.opt.linebreak = true
 vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
