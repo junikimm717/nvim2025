@@ -123,7 +123,7 @@ return {
           javascriptreact = prettier_eslint,
           typescriptreact = prettier_eslint,
           svelte = prettier_eslint,
-          astro = prettier,
+          astro = prettier_eslint,
           css = prettier,
           html = prettier,
           json = prettier,
