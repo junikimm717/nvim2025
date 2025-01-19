@@ -13,10 +13,10 @@ return {
         buffers = { theme = "dropdown" },
         find_files = { theme = "dropdown" },
         git_files = { theme = "dropdown" },
-        lsp_references = { theme = "ivy" },
-        lsp_definitions = { theme = "ivy" },
-        lsp_implementations = { theme = "ivy" },
-        lsp_type_definitions = { theme = "ivy" },
+        lsp_references = { theme = "dropdown" },
+        lsp_definitions = { theme = "dropdown" },
+        lsp_implementations = { theme = "dropdown" },
+        lsp_type_definitions = { theme = "dropdown" },
       },
       defaults = {
         file_ignore_patterns = {
