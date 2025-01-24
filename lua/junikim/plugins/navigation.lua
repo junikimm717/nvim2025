@@ -18,10 +18,10 @@ return {
         vim.keymap.set("n", "<leader>" .. tab, selector(tab))
         tab = tab + 1
       end
-      vim.keymap.set("n", "<leader>a", selector(1))
-      vim.keymap.set("n", "<leader>s", selector(2))
-      vim.keymap.set("n", "<leader>d", selector(3))
-      vim.keymap.set("n", "<leader>f", selector(4))
+      vim.keymap.set("n", "<leader>j", selector(1))
+      vim.keymap.set("n", "<leader>k", selector(2))
+      vim.keymap.set("n", "<leader>l", selector(3))
+      vim.keymap.set("n", "<leader>;", selector(4))
 
       vim.keymap.set("n", "<leader>p", function()
         local name = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
