@@ -132,6 +132,7 @@ return {
           graphql = prettier,
           nix = { "nixfmt" },
           cpp = { "clang-format" },
+          c = { "clang-format" },
         },
       })
       vim.keymap.set({ "n", "v" }, "<leader>ft", function()
