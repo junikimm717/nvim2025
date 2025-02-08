@@ -25,5 +25,6 @@ COPY . /root/.config/nvim
 WORKDIR /workspace
 RUN echo 'return require("configs.debian")' > /root/.config/nvim/lua/configs/init.lua
 RUN nvim --headless +Lazy! sync +FullSetup +qa
+COPY ./container/.profile /root/.profile
 
 CMD ["/bin/bash"]

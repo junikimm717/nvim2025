@@ -38,5 +38,6 @@ return {
 }
 EOF
 RUN nvim --headless +Lazy! sync +FullSetup +qa
+COPY ./container/.profile /root/.profile
 
 CMD ["/bin/ash"]
