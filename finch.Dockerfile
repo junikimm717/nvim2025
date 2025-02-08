@@ -3,7 +3,8 @@ FROM julia:alpine
 RUN julia -e 'using Pkg; Pkg.add("Finch")'
 
 RUN apk add ripgrep nodejs gcc make git fzf npm zip unzip curl tar\
-            tree-sitter-cli musl-dev neovim clang19-extra-tools python3 hdf5
+            tree-sitter-cli musl-dev neovim clang19-extra-tools python3 hdf5\
+            cmake musl-utils
 
 COPY . /root/.config/nvim
 
