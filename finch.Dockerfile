@@ -19,7 +19,7 @@ RUN julia -e 'using Pkg; Pkg.add(["Finch", "HDF5"]); using Finch; using HDF5;'
 COPY --from=builder /workspace/neovim/build/neovim.deb /root/packages/neovim.deb
 RUN apt-get update
 RUN apt-get install -y ripgrep nodejs gcc make golang git fzf npm zip unzip\
-  curl wget tar python3-venv\
+  curl wget tar python3-venv cmake hdf5-tools\
   /root/packages/neovim.deb
 RUN npm install -g tree-sitter-cli
 
@@ -41,7 +41,7 @@ return {
     "clangd",
     "clang-format",
   },
-  lazy = require("themes.kanagawa"),
+  lazy = require("themes.tokyonight"),
   treesitter = {
     "json",
     "python",
