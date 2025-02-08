@@ -33,6 +33,9 @@ return {
     "julia",
     "c",
     "cpp",
+    "bash",
+    "make",
+    "cmake",
   }
 }
 EOF
