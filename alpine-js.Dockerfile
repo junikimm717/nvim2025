@@ -2,7 +2,7 @@
 FROM alpine:latest
 
 RUN apk add ripgrep nodejs gcc make git fzf npm yarn zip unzip curl tar\
-            tree-sitter-cli musl-dev neovim
+            tree-sitter-cli musl-dev neovim ripgrep
 
 COPY . /root/.config/nvim
 
