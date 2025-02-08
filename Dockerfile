@@ -1,4 +1,4 @@
-FROM debian:sid AS builder
+FROM debian:bookworm AS builder
 
 WORKDIR /workspace
 RUN apt-get update
@@ -12,13 +12,14 @@ WORKDIR /workspace/neovim
 RUN make CMAKE_BUILD_TYPE=RelWithDebInfo
 RUN cd build && cpack -G DEB && mv *.deb neovim.deb
 
-FROM debian:sid
+FROM debian:bookworm
 
 COPY --from=builder /workspace/neovim/build/neovim.deb /root/packages/neovim.deb
 RUN apt-get update
 RUN apt-get install -y ripgrep nodejs gcc make golang git fzf npm zip unzip\
-  curl wget tar openjdk-24-jre-headless tree-sitter-cli python3-venv\
+  curl wget tar openjdk-17-jre-headless python3-venv\
   /root/packages/neovim.deb
+RUN npm install -g tree-sitter-cli
 
 COPY . /root/.config/nvim
 
