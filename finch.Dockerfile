@@ -60,6 +60,6 @@ return {
 EOF
 RUN nvim --headless +Lazy! sync +FullSetup +qa
 
-COPY ./container/.profile /root/.profile
+COPY ./container/.profile /root/.bashrc
 
 CMD ["/bin/bash"]
