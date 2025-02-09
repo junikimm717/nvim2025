@@ -26,6 +26,7 @@ jobs:
         with:
           platforms: linux/amd64
           context: .
+          file: ./dockerfile/Dockerfile
           push: true
           tags: junikimm717/nvim2025:latest
           cache-from: type=gha
@@ -49,7 +50,7 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           context: .
-          file: alpine-js.Dockerfile
+          file: ./dockerfile/alpine-js.Dockerfile
           push: true
           tags: junikimm717/nvim2025:alpine-js
           cache-from: type=gha
@@ -73,7 +74,7 @@ jobs:
         with:
           platforms: linux/amd64
           context: .
-          file: finch.Dockerfile
+          file: ./dockerfile/finch.Dockerfile
           push: true
           tags: junikimm717/nvim2025:finch
           cache-from: type=gha
