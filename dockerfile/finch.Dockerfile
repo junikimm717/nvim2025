@@ -14,7 +14,8 @@ RUN cd build && cpack -G DEB && mv *.deb neovim.deb
 
 FROM julia:bookworm
 
-RUN julia -e 'using Pkg; Pkg.add(["Finch", "HDF5"]); using Finch; using HDF5;'
+RUN julia -e 'using Pkg; Pkg.add(["Finch", "HDF5"]);'
+RUN julia -e 'using Finch; using HDF5;'
 
 COPY --from=builder /workspace/neovim/build/neovim.deb /root/packages/neovim.deb
 RUN apt-get update
