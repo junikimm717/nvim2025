@@ -15,7 +15,6 @@ RUN cd build && cpack -G DEB && mv *.deb neovim.deb
 FROM julia:bookworm
 
 RUN julia -e 'using Pkg; Pkg.add(["Preferences", "Finch", "HDF5"]);'
-RUN julia -e 'using Preferences; Preferences.set_preferences!("Finch", "precompile"=>false)'
 RUN julia -e 'using Finch; using HDF5;'
 
 COPY --from=builder /workspace/neovim/build/neovim.deb /root/packages/neovim.deb
