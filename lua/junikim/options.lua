@@ -60,7 +60,7 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
   pattern = { "*.ms", "*.me", "*.mom" },
   callback = function(args)
-    vim.bo.filetype = "groff"
+    vim.bo.filetype = "verilog"
   end,
 })
 
