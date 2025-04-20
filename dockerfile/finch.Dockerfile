@@ -3,7 +3,7 @@ FROM debian:bookworm AS builder
 WORKDIR /workspace
 RUN apt-get update
 RUN apt-get install -y ninja-build gettext cmake unzip curl build-essential file\
-    liblapack-dev libblas-dev
+    liblapack-dev libopenblas-dev
 RUN curl -LJ https://github.com/neovim/neovim/archive/refs/tags/nightly.tar.gz\
   -o neovim.tar.gz\
   && tar -xzvf neovim.tar.gz\
