@@ -2,8 +2,7 @@ FROM debian:bookworm AS builder
 
 WORKDIR /workspace
 RUN apt-get update
-RUN apt-get install -y ninja-build gettext cmake unzip curl build-essential file\
-    liblapack-dev libopenblas-dev
+RUN apt-get install -y ninja-build gettext cmake unzip curl build-essential file
 RUN curl -LJ https://github.com/neovim/neovim/archive/refs/tags/nightly.tar.gz\
   -o neovim.tar.gz\
   && tar -xzvf neovim.tar.gz\
@@ -22,6 +21,7 @@ COPY --from=builder /workspace/neovim/build/neovim.deb /root/packages/neovim.deb
 RUN apt-get update
 RUN apt-get install -y ripgrep nodejs gcc make golang git fzf npm zip unzip\
   curl wget tar python3-venv cmake hdf5-tools libhdf5-dev\
+  liblapack-dev libopenblas-dev file\
   /root/packages/neovim.deb
 RUN npm install -g tree-sitter-cli
 
