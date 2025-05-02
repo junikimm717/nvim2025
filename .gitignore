@@ -2,3 +2,5 @@
 .DS_Store
 /lua/configs/init.lua
 /lua/themes/init.lua
+/build
+/build-*
