@@ -49,10 +49,14 @@ GO_VERSION="1.24.2"
 GO_PACKAGE="go$GO_VERSION.linux-amd64"
 GO_PKG_PATH="$PKG_DIR/$GO_PACKAGE"
 
-
 # Check os and architecture.
 if test "$(uname -s)" != "Linux" || test "$(arch)" != "x86_64"; then
   echo "Neovim bootstrapping not supported!"
+  exit 1
+fi
+
+if ! command -V git tar wget make gcc perl unzip chmod tr awk > /dev/null 2>&1; then
+  echo "You do not have the bootstrap prerequisites!"
   exit 1
 fi
 
@@ -236,11 +240,6 @@ export XDG_CACHE_HOME="$DIR/build/nvim/cache"
 EOF
 }
 
-install_clangd() {
-  # TODO
-  exit
-}
-
 install_ripgrep() {
   # see https://github.com/BurntSushi/ripgrep/releases
   install_stow
@@ -249,7 +248,7 @@ install_ripgrep() {
     echo "Package not found, installing Ripgrep version $RIPGREP_VERSION..."
     ! test -f $RIPGREP_PACKAGE.tar.gz &&\
       wget "https://github.com/BurntSushi/ripgrep/releases/download/$RIPGREP_VERSION/$RIPGREP_PACKAGE.tar.gz" &&\
-      tar -czvf "$RIPGREP_PACKAGE.tar.gz"
+      tar -xzvf "$RIPGREP_PACKAGE.tar.gz"
   fi
   cd "$PKG_DIR" || exit 1
   ln -sf "$RIPGREP_PKG_PATH/rg" "$BIN_DIR/rg"
