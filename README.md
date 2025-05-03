@@ -18,9 +18,9 @@ docker run --rm -it junikimm717/nvim2025:finch
 ## Bootstrapping
 
 You can use the provided `bootstrap.sh` if you're in a server environment
-without admin privileges (and the server uses x86_64). The script only requires
-a few basic utilities to work properly, and it will alert you if any of them are
-missing.
+without admin privileges (and the server uses x86_64 or aarch64). The script
+only requires a few basic utilities to work properly, and it should alert you if
+any of them are missing.
 
 ```sh
 # run the bootstrapping script
