@@ -55,8 +55,14 @@ if test "$(uname -s)" != "Linux" || test "$(arch)" != "x86_64"; then
   exit 1
 fi
 
-if ! command -V git tar wget make gcc perl unzip chmod tr awk > /dev/null 2>&1; then
-  echo "You do not have the bootstrap prerequisites!"
+nodeps=0
+for cmd in git tar wget make gcc perl unzip chmod tr awk; do
+  if ! command -V $cmd > /dev/null 2>&1; then
+    echo "You do not have $cmd! Cannot build..."
+    nodeps=1
+  fi
+done
+if test $nodeps -ne 0; then
   exit 1
 fi
 
