@@ -277,6 +277,11 @@ return {
           capabilities = lsp_capabilities,
         })
       end
+      if not installed("gopls") and vim.fn.executable("gopls") then
+        lspconfig.gopls.setup({
+          capabilities = lsp_capabilities,
+        })
+      end
     end,
   },
   {
