@@ -7,8 +7,8 @@
 # 1. basic build tools (gcc, etc), not including cmake
 # 2. perl
 
-# I will freely assume that this system has basic build tools and perl
-# installed. Installing those myself would be a massive pain in the ass anw.
+# If a package is installed, all the script does it make sure the symlinks are
+# set correctly.
 
 DIR="$(realpath "$(dirname "$0")")"
 PKG_DIR="$DIR/build/pkgs"
@@ -257,12 +257,13 @@ install_ripgrep() {
       tar -xzvf "$RIPGREP_PACKAGE.tar.gz"
   fi
   cd "$PKG_DIR" || exit 1
-  ln -sf "$RIPGREP_PKG_PATH/rg" "$BIN_DIR/rg"
+  stow --target="$BIN_DIR" --stow --dir="$PKG_DIR" "$RIPGREP_PACKAGE"
 }
 
 install_tmuxs() {
   install_go
   "$BIN_DIR/go" install github.com/junikimm717/tmuxs@latest
+  "$BIN_DIR/go" install github.com/junegunn/fzf@latest
 }
 
 install_neovim

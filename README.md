@@ -1,7 +1,9 @@
 # Juni's 2025 Neovim Config
 
-Now with a new plugin manager and theme switching! The config should also
-self-bootstrap itself.
+Now with a new plugin manager and theme switching!
+
+If you're on an x86_64 hpc environment, you can just bootstrap all the
+required dependencies of the full config by calling `./bootstrap.sh`.
 
 [Old Config](https://git.junickim.me/junikimm717/nvim2023)
 
@@ -14,15 +16,29 @@ docker run --rm -it junikimm717/nvim2025
 docker run --rm -it junikimm717/nvim2025:alpine-js
 ```
 
+# Bootstrapping
+
+You can use the provided `bootstrap.sh` if you're in a server environment
+without admin privileges (and the server uses x86_64). The script only requires
+a few basic utilities to work properly, and it will alert you if any of them are
+missing.
+
+```sh
+# run the bootstrapping script
+./bootstrap.sh
+# You should consider adding this to your $PATH
+./build/bin/nvim
+```
+
 # System Installation
 
 ## Requirements
 
-- The latest version of neovim
-- Nodejs (and also treesitter cli)
-- GCC and Make
-- Go
 - Git
+- GCC and Make
+- A very recent version neovim (at least 0.10)
+- Nodejs (and also treesitter cli)
+- Go
 - Java (for ltex ls)
 - RipGrep
 
