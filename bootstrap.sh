@@ -250,7 +250,7 @@ install_ripgrep() {
   # see https://github.com/BurntSushi/ripgrep/releases
   install_stow
   cd "$PKG_DIR" || exit 1
-  if ! test -d "$RIPGREP_VERSION"; then
+  if ! test -d "$RIPGREP_PKG_PATH"; then
     echo "Package not found, installing Ripgrep version $RIPGREP_VERSION..."
     ! test -f $RIPGREP_PACKAGE.tar.gz &&\
       wget "https://github.com/BurntSushi/ripgrep/releases/download/$RIPGREP_VERSION/$RIPGREP_PACKAGE.tar.gz" &&\
