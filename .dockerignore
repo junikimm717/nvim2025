@@ -6,4 +6,4 @@
 /config.json
 *.swp
 /dockerfile
-/bootstrap.sh
+/build

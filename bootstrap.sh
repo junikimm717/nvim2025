@@ -130,6 +130,7 @@ install_python() {
       --prefix="$(pwd)/python-build"\
       --exec-prefix="$(pwd)/python-build"\
       --disable-test-modules\
+      --enable-optimizations\
       --with-ensurepip=install\
       && make -j4 && make install
   fi
@@ -200,8 +201,12 @@ export GOPATH="$PKG_DIR/gopath:\$GOPATH"
 export PATH="$BIN_DIR:\$PATH"
 export XDG_CONFIG_HOME="$DIR/build/nvim/config"
 export XDG_DATA_HOME="$DIR/build/nvim/share"
-export XDG_STATE_HOME="$DIR/build/nvim/state"
-export XDG_CACHE_HOME="$DIR/build/nvim/cache"
+if mkdir -p "$DIR/build/nvim/state" 2>/dev/null && test -w "$DIR/build/nvim/state"; then
+  export XDG_STATE_HOME="$DIR/build/nvim/state"
+fi
+if mkdir -p "$DIR/build/nvim/cache" 2>/dev/null && test -w "$DIR/build/nvim/cache"; then
+  export XDG_CACHE_HOME="$DIR/build/nvim/cache"
+fi
 
 "$NEOVIM_PKG_PATH/bin/nvim" "\$@"
 EOF

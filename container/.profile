@@ -14,3 +14,4 @@ export EDITOR=nvim
 
 export PATH=$HOME/.local/bin:$PATH
 export PATH=$HOME/go/bin:$PATH
+export PATH=/nvim/build/bin:$PATH
