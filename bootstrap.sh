@@ -18,7 +18,7 @@ BIN_DIR="$DIR/build/bin"
 export PATH="$BIN_DIR:$PATH"
 
 # Check os and architecture.
-if test "$(uname -s)" != "Linux" || test "$(arch)" != "x86_64"; then
+if test "$(uname -s)" != "Linux"; then
   echo "Neovim bootstrapping not supported! You must be on Linux"
   exit 1
 fi
