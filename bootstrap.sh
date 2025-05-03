@@ -17,42 +17,24 @@ PKG_DIR="$DIR/build/pkgs"
 BIN_DIR="$DIR/build/bin"
 export PATH="$BIN_DIR:$PATH"
 
-# Config variables for versions and paths.
-
-STOW_VERSION="2.4.1"
-STOW_PACKAGE="stow-$STOW_VERSION"
-STOW_PKG_PATH="$PKG_DIR/$STOW_PACKAGE"
-
-NODE_VERSION="23.11.0"
-NODE_PACKAGE="node-v$NODE_VERSION-linux-x64"
-NODE_PKG_PATH="$PKG_DIR/$NODE_PACKAGE"
-
-PYTHON_VERSION="3.13.3"
-PYTHON_PACKAGE="Python-$PYTHON_VERSION"
-PYTHON_PKG_PATH="$PKG_DIR/$PYTHON_PACKAGE"
-
-GETTEXT_VERSION="0.24"
-GETTEXT_PACKAGE="gettext-$GETTEXT_VERSION"
-GETTEXT_PKG_PATH="$PKG_DIR/$GETTEXT_PACKAGE"
-
-NEOVIM_VERSION="0.11.1"
-NEOVIM_PACKAGE="neovim-$NEOVIM_VERSION"
-NEOVIM_PKG_PATH="$PKG_DIR/$NEOVIM_PACKAGE"
-NEOVIM_DL="nvim-linux-x86_64"
-
-RIPGREP_VERSION="14.1.1"
-RIPGREP_PACKAGE="ripgrep-$RIPGREP_VERSION-x86_64-unknown-linux-musl"
-RIPGREP_PKG_PATH="$PKG_DIR/$RIPGREP_PACKAGE"
-
-GO_VERSION="1.24.2"
-GO_PACKAGE="go$GO_VERSION.linux-amd64"
-GO_PKG_PATH="$PKG_DIR/$GO_PACKAGE"
-
 # Check os and architecture.
 if test "$(uname -s)" != "Linux" || test "$(arch)" != "x86_64"; then
-  echo "Neovim bootstrapping not supported!"
+  echo "Neovim bootstrapping not supported! You must be on Linux"
   exit 1
 fi
+
+case "$(arch)" in
+  x86_64)
+    . ./pkgs/x86_64_linux.sh
+    ;;
+  aarch64)
+    . ./pkgs/aarch64_linux.sh
+    ;;
+  *)
+    echo "Neovim bootstrapping not supported! You must be on aarch64 or x86_64"
+    exit 1
+    ;;
+esac
 
 nodeps=0
 for cmd in git tar wget make gcc perl unzip chmod tr awk; do
