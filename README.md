@@ -2,21 +2,20 @@
 
 Now with a new plugin manager and theme switching!
 
-If you're on an x86_64 hpc environment, you can just bootstrap all the
-required dependencies of the full config by calling `./bootstrap.sh`.
-
 [Old Config](https://git.junickim.me/junikimm717/nvim2023)
 
-# Docker
+## Docker
 
 ```bash
 # full-featured debian container (x86 only)
 docker run --rm -it junikimm717/nvim2025
 # minimal alpine container with JavaScript support (x86 and arm)
 docker run --rm -it junikimm717/nvim2025:alpine-js
+# container for my UROP work at CSAIL (x86 only)
+docker run --rm -it junikimm717/nvim2025:finch
 ```
 
-# Bootstrapping
+## Bootstrapping
 
 You can use the provided `bootstrap.sh` if you're in a server environment
 without admin privileges (and the server uses x86_64). The script only requires
@@ -30,9 +29,9 @@ missing.
 ./build/bin/nvim
 ```
 
-# System Installation
+## System Installation
 
-## Requirements
+### Requirements
 
 - Git
 - GCC and Make
@@ -42,7 +41,7 @@ missing.
 - Java (for ltex ls)
 - RipGrep
 
-## Additional tools that you may want to use
+### Additional tools that you may want to use
 
 - Fzf
 - Tmux and [tmuxs](https://github.com/junikimm717/tmuxs)

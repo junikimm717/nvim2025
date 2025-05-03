@@ -11,6 +11,8 @@
 # set correctly.
 
 DIR="$(realpath "$(dirname "$0")")"
+cd "$DIR" || exit 1
+
 PKG_DIR="$DIR/build/pkgs"
 BIN_DIR="$DIR/build/bin"
 export PATH="$BIN_DIR:$PATH"
@@ -33,13 +35,10 @@ GETTEXT_VERSION="0.24"
 GETTEXT_PACKAGE="gettext-$GETTEXT_VERSION"
 GETTEXT_PKG_PATH="$PKG_DIR/$GETTEXT_PACKAGE"
 
-NINJA_VERSION="1.12.1"
-NINJA_PACKAGE="ninja-$NINJA_VERSION"
-NINJA_PKG_PATH="$PKG_DIR/$NINJA_PACKAGE"
-
 NEOVIM_VERSION="0.11.1"
 NEOVIM_PACKAGE="neovim-$NEOVIM_VERSION"
 NEOVIM_PKG_PATH="$PKG_DIR/$NEOVIM_PACKAGE"
+NEOVIM_DL="nvim-linux-x86_64"
 
 RIPGREP_VERSION="14.1.1"
 RIPGREP_PACKAGE="ripgrep-$RIPGREP_VERSION-x86_64-unknown-linux-musl"
@@ -134,7 +133,6 @@ EOF
 }
 
 install_python() {
-  # use the python download page.
   # You need to force inclusion of venv for things to work as well.
   install_stow
   cd "$PKG_DIR" || exit 1
@@ -158,31 +156,12 @@ install_python() {
 }
 
 install_cmake() {
-  # https://cmake.org/download/
-  # apparently you can do this through pip.
   install_python
   "$BIN_DIR/pip3" install cmake
   stow --target="$BIN_DIR" --stow --dir="$PYTHON_PACKAGE/python-build" bin
 }
 
-install_ninja() {
-  install_stow
-  cd "$PKG_DIR" || exit 1
-  if ! test -d "$NINJA_PKG_PATH"; then
-    echo "Package not found, installing Ninja version $NINJA_VERSION..."
-    ! test -f $NINJA_PACKAGE.zip &&\
-      wget "https://github.com/ninja-build/ninja/releases/download/v$NINJA_VERSION/ninja-linux.zip"\
-      -O $NINJA_PACKAGE.zip
-    mkdir -p "$NINJA_PKG_PATH/bin" && cd "$NINJA_PKG_PATH/bin" || exit 1
-    unzip "$PKG_DIR/$NINJA_PACKAGE.zip"
-  fi
-  cd "$PKG_DIR" || exit 1
-  stow --target="$BIN_DIR" --stow --dir="$NINJA_PKG_PATH" bin
-}
-
 install_gettext() {
-  # this is going to be pain...
-  # make sure to ./configure --without-emacs
   install_stow
   cd "$PKG_DIR" || exit 1
   if ! test -d "$GETTEXT_PKG_PATH"; then
@@ -220,10 +199,10 @@ install_neovim() {
   if ! test -d "$NEOVIM_PKG_PATH"; then
     echo "Package not found, installing Neovim version $NEOVIM_VERSION..."
     ! test -f "$NEOVIM_PACKAGE.tar.gz"\
-      && wget "https://github.com/neovim/neovim/releases/download/v$NEOVIM_VERSION/nvim-linux-x86_64.tar.gz"\
-      && mv "nvim-linux-x86_64.tar.gz" "$NEOVIM_PACKAGE.tar.gz"\
+      && wget "https://github.com/neovim/neovim/releases/download/v$NEOVIM_VERSION/$NEOVIM_DL.tar.gz"\
+      && mv "$NEOVIM_DL.tar.gz" "$NEOVIM_PACKAGE.tar.gz"\
       && tar -xzvf "$NEOVIM_PACKAGE.tar.gz"\
-      && mv "nvim-linux-x86_64" "$NEOVIM_PACKAGE"
+      && mv "$NEOVIM_DL" "$NEOVIM_PACKAGE"
 
     export PATH="$NEOVIM_PKG_PATH/bin:$PATH"
   fi
