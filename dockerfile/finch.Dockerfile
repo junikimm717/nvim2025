@@ -21,7 +21,7 @@ COPY --from=builder /workspace/neovim/build/neovim.deb /root/packages/neovim.deb
 RUN apt-get update
 RUN apt-get install -y ripgrep nodejs gcc make golang git fzf npm zip unzip\
   curl wget tar python3-venv cmake hdf5-tools libhdf5-dev\
-  liblapack-dev libopenblas-dev file\
+  liblapack-dev libopenblas-dev file clangd\
   /root/packages/neovim.deb
 RUN npm install -g tree-sitter-cli
 
@@ -36,11 +36,8 @@ return {
     "json-lsp",
     -- linters and formatters
     "prettierd",
-    "eslint_d",
-    "rustywind",
     "julia-lsp",
     "pyright",
-    "clangd",
     "clang-format",
   },
   lazy = require("themes.tokyonight"),
