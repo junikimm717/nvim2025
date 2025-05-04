@@ -1,15 +1,5 @@
 #!/bin/sh
 
-# This is a bootstrapping script meant for setting up dev environments on hpc
-# clusters for personal use. As a result, it only supports x86_64 at the moment.
-
-# This script assumes existence of the following tools:
-# 1. basic build tools (gcc, etc), not including cmake
-# 2. perl
-
-# If a package is installed, all the script does it make sure the symlinks are
-# set correctly.
-
 DIR="$(realpath "$(dirname "$0")")"
 cd "$DIR" || exit 1
 

@@ -7,3 +7,6 @@
 *.swp
 /dockerfile
 /build
+*.md
+/pkgs
+/bootstrap.sh

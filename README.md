@@ -6,12 +6,14 @@ Now with a new plugin manager and theme switching!
 
 ## Docker
 
+The CI builds images for both x86_64 and arm64
+
 ```bash
-# full-featured debian container (x86 only)
+# full-featured debian container
 docker run --rm -it junikimm717/nvim2025
-# minimal alpine container with JavaScript support (x86 and arm)
+# minimal alpine container with JavaScript support
 docker run --rm -it junikimm717/nvim2025:alpine-js
-# container for my UROP work at CSAIL (x86 only)
+# container for my UROP work at CSAIL
 docker run --rm -it junikimm717/nvim2025:finch
 ```
 
