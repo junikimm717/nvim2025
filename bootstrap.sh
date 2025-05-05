@@ -54,7 +54,11 @@ install_stow() {
   fi
   cat <<EOF > "$BIN_DIR/stow" && chmod +x "$BIN_DIR/stow"
 #!/bin/sh
-perl -I"$STOW_PKG_PATH/lib" "$STOW_PKG_PATH/bin/stow" "\$@"
+DIR="\$(realpath "\$(dirname "\$0")")/../.."
+PKG_DIR="\$DIR/build/pkgs"
+BIN_DIR="\$DIR/build/bin"
+
+perl -I"\$PKG_DIR/$STOW_PACKAGE/lib" "\$PKG_DIR/$STOW_PACKAGE/bin/stow" "\$@"
 EOF
 }
 
@@ -87,9 +91,12 @@ install_go() {
 
   cat <<EOF > "$BIN_DIR/go" && chmod +x "$BIN_DIR/go"
 #!/bin/sh
-export GOBIN="$BIN_DIR"
-export GOPATH="$PKG_DIR/gopath:\$GOPATH"
-"$GO_PKG_PATH/bin/go" "\$@"
+DIR="\$(realpath "\$(dirname "\$0")")/../.."
+PKG_DIR="\$DIR/build/pkgs"
+BIN_DIR="\$DIR/build/bin"
+export GOBIN="\$BIN_DIR"
+export GOPATH="\$PKG_DIR/gopath:\$GOPATH"
+"\$PKG_DIR/$GO_PACKAGE/bin/go" "\$@"
 EOF
 
   export GOBIN="$GO_PKG_PATH/bin"
@@ -98,9 +105,12 @@ EOF
 
   cat <<EOF > "$BIN_DIR/gopls" && chmod +x "$BIN_DIR/gopls"
 #!/bin/sh
-export GOBIN="$BIN_DIR"
-export GOPATH="$PKG_DIR/gopath:\$GOPATH"
-"$GO_PKG_PATH/bin/gopls" "\$@"
+DIR="\$(realpath "\$(dirname "\$0")")/../.."
+PKG_DIR="\$DIR/build/pkgs"
+BIN_DIR="\$DIR/build/bin"
+export GOBIN="\$BIN_DIR"
+export GOPATH="\$PKG_DIR/gopath:\$GOPATH"
+"\$PKG_DIR/$GO_PACKAGE/bin/gopls" "\$@"
 EOF
 }
 
@@ -186,24 +196,27 @@ install_neovim() {
   ln -sf "$DIR" "$DIR/build/nvim/config/nvim"
   cat <<EOF > "$BIN_DIR/nvim" && chmod +x "$BIN_DIR/nvim"
 #!/bin/sh
-export GOBIN="$BIN_DIR"
-export GOPATH="$PKG_DIR/gopath:\$GOPATH"
-export PATH="$BIN_DIR:\$PATH"
-export XDG_CONFIG_HOME="$DIR/build/nvim/config"
-export XDG_DATA_HOME="$DIR/build/nvim/share"
-if mkdir -p "$DIR/build/nvim/state" 2>/dev/null && test -w "$DIR/build/nvim/state"; then
-  export XDG_STATE_HOME="$DIR/build/nvim/state"
+DIR="\$(realpath "\$(dirname "\$0")")/../.."
+PKG_DIR="\$DIR/build/pkgs"
+BIN_DIR="\$DIR/build/bin"
+
+export GOBIN="\$BIN_DIR"
+export GOPATH="\$PKG_DIR/gopath:\$GOPATH"
+export PATH="\$BIN_DIR:\$PATH"
+export XDG_CONFIG_HOME="\$DIR/build/nvim/config"
+export XDG_DATA_HOME="\$DIR/build/nvim/share"
+if mkdir -p "\$DIR/build/nvim/state" 2>/dev/null && test -w "\$DIR/build/nvim/state"; then
+  export XDG_STATE_HOME="\$DIR/build/nvim/state"
 fi
-if mkdir -p "$DIR/build/nvim/cache" 2>/dev/null && test -w "$DIR/build/nvim/cache"; then
-  export XDG_CACHE_HOME="$DIR/build/nvim/cache"
+if mkdir -p "\$DIR/build/nvim/cache" 2>/dev/null && test -w "\$DIR/build/nvim/cache"; then
+  export XDG_CACHE_HOME="\$DIR/build/nvim/cache"
 fi
 
-"$NEOVIM_PKG_PATH/bin/nvim" "\$@"
+"\$PKG_DIR/$NEOVIM_PACKAGE/bin/nvim" "\$@"
 EOF
 }
 
 install_ripgrep() {
-  # see https://github.com/BurntSushi/ripgrep/releases
   install_stow
   cd "$PKG_DIR" || exit 1
   if ! test -d "$RIPGREP_PKG_PATH"; then
