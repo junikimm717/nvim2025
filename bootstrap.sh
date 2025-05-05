@@ -13,6 +13,8 @@ if test "$(uname -s)" != "Linux"; then
   exit 1
 fi
 
+. ./pkgs/noarch.sh
+
 case "$(arch)" in
   x86_64)
     . ./pkgs/x86_64_linux.sh
