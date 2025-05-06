@@ -16,4 +16,6 @@ ENV PATH="/nvim/build/bin:${PATH}"
 RUN nvim --headless +Lazy! sync +FullSetup +qa
 COPY ./container/.profile /root/.bashrc
 
+WORKDIR /workspace
+
 CMD ["/bin/bash"]

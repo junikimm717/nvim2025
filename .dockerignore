@@ -3,6 +3,7 @@
 /lua/themes/init.lua
 /lua/configs/init.lua
 .git
+.github
 /config.json
 *.swp
 /dockerfile
