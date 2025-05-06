@@ -50,7 +50,7 @@ install_stow() {
     ! test -f "$STOW_PACKAGE.tar.gz" &&\
       wget "https://ftp.gnu.org/gnu/stow/$STOW_PACKAGE.tar.gz"
 
-    tar -xzvf "$STOW_PACKAGE.tar.gz"
+    tar -xzf "$STOW_PACKAGE.tar.gz"
     cd "$STOW_PACKAGE" || exit 1
     ./configure && make
   fi
@@ -72,7 +72,7 @@ install_node() {
     MAJOR_VERSION="$(echo "$NODE_VERSION" | tr '.' ' ' | awk '{print $1}' )"
     ! test -f "$NODE_PACKAGE.tar.gz" &&\
       wget "https://nodejs.org/download/release/latest-v$MAJOR_VERSION.x/$NODE_PACKAGE.tar.gz"
-    tar -xzvf "$NODE_PACKAGE.tar.gz"
+    tar -xzf "$NODE_PACKAGE.tar.gz"
 
     export PATH="$NODE_PKG_PATH/bin:$PATH"
     npm install -g tree-sitter-cli
@@ -87,7 +87,7 @@ install_go() {
     echo "Package not found, installing Go version $GO_VERSION..."
       ! test -f $GO_PACKAGE.tar.gz &&\
         wget https://go.dev/dl/$GO_PACKAGE.tar.gz
-      tar -xzvf $GO_PACKAGE.tar.gz && mv go $GO_PACKAGE
+      tar -xzf $GO_PACKAGE.tar.gz && mv go $GO_PACKAGE
       mkdir -p "$PKG_DIR/gopath"
   fi
 
@@ -125,7 +125,7 @@ install_python() {
     MAJOR_VERSION="$(echo "$NODE_VERSION" | tr '.' ' ' | awk '{print $1}' )"
     ! test -f "Python-$PYTHON_VERSION.tgz" &&\
       wget "https://www.python.org/ftp/python/$PYTHON_VERSION/$PYTHON_PACKAGE.tgz"
-    tar -xzvf "$PYTHON_PACKAGE.tgz"
+    tar -xzf "$PYTHON_PACKAGE.tgz"
     cd "$PYTHON_PACKAGE" || exit 1
     mkdir -p python-build
     ./configure\
@@ -153,7 +153,7 @@ install_gettext() {
     echo "Package not found, installing GetText version $GETTEXT_VERSION..."
     ! test -f $GETTEXT_PACKAGE.tar.gz &&\
       wget "https://ftp.gnu.org/gnu/gettext/$GETTEXT_PACKAGE.tar.gz"
-    tar -xzvf $GETTEXT_PACKAGE.tar.gz
+    tar -xzf $GETTEXT_PACKAGE.tar.gz
     cd $GETTEXT_PACKAGE || exit 1
     mkdir "gettext-build"
     ./configure \
@@ -186,7 +186,7 @@ install_neovim() {
     ! test -f "$NEOVIM_PACKAGE.tar.gz"\
       && wget "https://github.com/neovim/neovim/releases/download/v$NEOVIM_VERSION/$NEOVIM_DL.tar.gz"\
       && mv "$NEOVIM_DL.tar.gz" "$NEOVIM_PACKAGE.tar.gz"\
-      && tar -xzvf "$NEOVIM_PACKAGE.tar.gz"\
+      && tar -xzf "$NEOVIM_PACKAGE.tar.gz"\
       && mv "$NEOVIM_DL" "$NEOVIM_PACKAGE"
 
     export PATH="$NEOVIM_PKG_PATH/bin:$PATH"
@@ -225,7 +225,7 @@ install_ripgrep() {
     echo "Package not found, installing Ripgrep version $RIPGREP_VERSION..."
     ! test -f $RIPGREP_PACKAGE.tar.gz &&\
       wget "https://github.com/BurntSushi/ripgrep/releases/download/$RIPGREP_VERSION/$RIPGREP_PACKAGE.tar.gz" &&\
-      tar -xzvf "$RIPGREP_PACKAGE.tar.gz"
+      tar -xzf "$RIPGREP_PACKAGE.tar.gz"
   fi
   cd "$PKG_DIR" || exit 1
   stow --target="$BIN_DIR" --stow --dir="$PKG_DIR" "$RIPGREP_PACKAGE"
