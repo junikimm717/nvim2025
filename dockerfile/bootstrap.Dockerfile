@@ -1,8 +1,7 @@
-FROM debian:bookworm
+FROM debian:bookworm-slim
 
 RUN apt-get update
-RUN apt-get install -y build-essential git tar wget make gcc perl unzip\
-    libssl-dev libffi8 libbz2-1.0 liblzma-dev zlib1g-dev libsqlite3-dev libreadline-dev
+RUN apt-get install -y build-essential git tar wget make gcc perl unzip
 WORKDIR /nvim
 
 COPY bootstrap.sh .
@@ -18,4 +17,4 @@ COPY ./container/.profile /root/.bashrc
 
 WORKDIR /workspace
 
-CMD ["/bin/bash"]
+CMD ["/bin/ash"]
