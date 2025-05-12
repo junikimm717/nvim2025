@@ -121,29 +121,15 @@ install_python() {
   install_stow
   cd "$PKG_DIR" || exit 1
   if ! test -d "$PYTHON_PKG_PATH"; then
-    echo "Package not found, installing NodeJS version $NODE_VERSION..."
-    MAJOR_VERSION="$(echo "$NODE_VERSION" | tr '.' ' ' | awk '{print $1}' )"
-    ! test -f "Python-$PYTHON_VERSION.tgz" &&\
-      wget "https://www.python.org/ftp/python/$PYTHON_VERSION/$PYTHON_PACKAGE.tgz"
-    tar -xzf "$PYTHON_PACKAGE.tgz"
+    echo "Package not found, installing Python3..."
+    ! test -f "$PYTHON_PACKAGE.tar.gz" &&\
+      wget "https://github.com/junikimm717/static-python/releases/download/binaries/$PYTHON_PACKAGE.tar.gz"
+    tar -xzf "$PYTHON_PACKAGE.tar.gz"
     cd "$PYTHON_PACKAGE" || exit 1
-    mkdir -p python-build
-    ./configure\
-      --prefix="$(pwd)/python-build"\
-      --exec-prefix="$(pwd)/python-build"\
-      --disable-test-modules\
-      --enable-optimizations\
-      --with-ensurepip=install\
-      && make -j4 && make install
   fi
   cd "$PKG_DIR" || exit 1
-  stow --target="$BIN_DIR" --stow --dir="$PYTHON_PACKAGE/python-build" bin
-}
-
-install_cmake() {
-  install_python
-  "$BIN_DIR/pip3" install cmake
-  stow --target="$BIN_DIR" --stow --dir="$PYTHON_PACKAGE/python-build" bin
+  stow --target="$DIR/build/bin" --stow --dir="$PYTHON_PACKAGE" bin
+  mkdir -p "$DIR/build/lib" && stow --target="$DIR/build/lib" --stow --dir="$PYTHON_PACKAGE" lib
 }
 
 install_gettext() {
