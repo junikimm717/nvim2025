@@ -29,8 +29,8 @@ case "$(arch)" in
 esac
 
 nodeps=0
-for cmd in git tar wget make gcc perl unzip chmod tr awk; do
-  if ! command -V $cmd > /dev/null 2>&1; then
+for cmd in git tar wget make perl unzip chmod tr awk; do
+  if ! command -v $cmd > /dev/null 2>&1; then
     echo "You do not have $cmd! Cannot build..."
     nodeps=1
   fi
@@ -65,7 +65,6 @@ EOF
 }
 
 install_node() {
-  install_stow
   cd "$PKG_DIR" || exit 1
   if ! test -d "$NODE_PKG_PATH"; then
     echo "Package not found, installing NodeJS version $NODE_VERSION..."
@@ -81,7 +80,6 @@ install_node() {
 }
 
 install_go() {
-  install_stow
   cd "$PKG_DIR" || exit 1
   if ! test -d "$GO_PKG_PATH"; then
     echo "Package not found, installing Go version $GO_VERSION..."
@@ -118,7 +116,6 @@ EOF
 
 install_python() {
   # You need to force inclusion of venv for things to work as well.
-  install_stow
   cd "$PKG_DIR" || exit 1
   if ! test -d "$PYTHON_PKG_PATH"; then
     echo "Package not found, installing Python3..."
@@ -132,40 +129,7 @@ install_python() {
   mkdir -p "$DIR/build/lib" && stow --target="$DIR/build/lib" --stow --dir="$PYTHON_PACKAGE" lib
 }
 
-install_gettext() {
-  install_stow
-  cd "$PKG_DIR" || exit 1
-  if ! test -d "$GETTEXT_PKG_PATH"; then
-    echo "Package not found, installing GetText version $GETTEXT_VERSION..."
-    ! test -f $GETTEXT_PACKAGE.tar.gz &&\
-      wget "https://ftp.gnu.org/gnu/gettext/$GETTEXT_PACKAGE.tar.gz"
-    tar -xzf $GETTEXT_PACKAGE.tar.gz
-    cd $GETTEXT_PACKAGE || exit 1
-    mkdir "gettext-build"
-    ./configure \
-      --disable-java \
-      --disable-openmp \
-      --disable-libasprintf \
-      --disable-curses \
-      --disable-threads \
-      --disable-rpath \
-      --disable-dependency-tracking \
-      --without-emacs \
-      --without-git \
-      --prefix="$(pwd)/gettext-build"\
-      --exec-prefix="$(pwd)/gettext-build"\
-      && make -j4\
-      && make install
-    cd "$PKG_DIR" || exit 1
-  fi
-  stow --target="$BIN_DIR" --stow --dir="$GETTEXT_PACKAGE/gettext-build" bin
-}
-
 install_neovim() {
-  install_stow
-  install_node
-  install_python
-  install_go
   cd "$PKG_DIR" || exit 1
   if ! test -d "$NEOVIM_PKG_PATH"; then
     echo "Package not found, installing Neovim version $NEOVIM_VERSION..."
@@ -205,7 +169,6 @@ EOF
 }
 
 install_ripgrep() {
-  install_stow
   cd "$PKG_DIR" || exit 1
   if ! test -d "$RIPGREP_PKG_PATH"; then
     echo "Package not found, installing Ripgrep version $RIPGREP_VERSION..."
@@ -218,11 +181,16 @@ install_ripgrep() {
 }
 
 install_tmuxs() {
-  install_go
   "$BIN_DIR/go" install github.com/junikimm717/tmuxs@latest
   "$BIN_DIR/go" install github.com/junegunn/fzf@latest
 }
 
-install_neovim
-install_tmuxs
-install_ripgrep
+case "$1" in
+  install_*)
+    "$1"
+    ;;
+  *)
+    echo "The bootstrapper should not be called directly."
+    exit 1
+    ;;
+esac

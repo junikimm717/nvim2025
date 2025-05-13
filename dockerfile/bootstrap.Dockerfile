@@ -1,12 +1,13 @@
 FROM debian:bookworm-slim
 
 RUN apt-get update
-RUN apt-get install -y build-essential git tar wget make gcc perl unzip
+RUN apt-get install -y git tar wget make perl unzip
 WORKDIR /nvim
 
-COPY bootstrap.sh .
+COPY _bootstrap.sh .
+COPY Makefile .
 COPY pkgs ./pkgs
-RUN ./bootstrap.sh
+RUN make -j$(nproc)
 
 COPY . .
 

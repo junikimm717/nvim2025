@@ -27,8 +27,8 @@ only requires a few basic utilities to work properly, and it should alert you if
 any of them are missing.
 
 ```sh
-# run the bootstrapping script
-./bootstrap.sh
+# run the bootstrapping script via the Makefile
+make -j$(nproc)
 # You should consider adding this to your $PATH
 ./build/bin/nvim
 ```
