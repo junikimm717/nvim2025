@@ -2,7 +2,7 @@
 
 # Config variables for versions and paths.
 
-NODE_VERSION="23.11.0"
+NODE_VERSION="23.11.1"
 NODE_PACKAGE="node-v$NODE_VERSION-linux-x64"
 NODE_PKG_PATH="$PKG_DIR/$NODE_PACKAGE"
 

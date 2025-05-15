@@ -68,9 +68,8 @@ install_node() {
   cd "$PKG_DIR" || exit 1
   if ! test -d "$NODE_PKG_PATH"; then
     echo "Package not found, installing NodeJS version $NODE_VERSION..."
-    MAJOR_VERSION="$(echo "$NODE_VERSION" | tr '.' ' ' | awk '{print $1}' )"
     ! test -f "$NODE_PACKAGE.tar.gz" &&\
-      wget "https://nodejs.org/download/release/latest-v$MAJOR_VERSION.x/$NODE_PACKAGE.tar.gz"
+      wget "https://nodejs.org/download/release/v$NODE_VERSION/$NODE_PACKAGE.tar.gz"
     tar -xzf "$NODE_PACKAGE.tar.gz"
 
     export PATH="$NODE_PKG_PATH/bin:$PATH"
