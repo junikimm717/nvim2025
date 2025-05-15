@@ -3,10 +3,16 @@ INSTALLED = ./build/installed
 # The only reason for this Makefile to exist is to parallelize the entire
 # bootstrapping process.
 
+
+.PHONY: all docker
+
 all: $(INSTALLED) $(INSTALLED)/node \
 	$(INSTALLED)/python $(INSTALLED)/go $(INSTALLED)/neovim \
 	$(INSTALLED)/tmuxs $(INSTALLED)/ripgrep
-.PHONY: all
+
+docker: $(INSTALLED) $(INSTALLED)/node \
+	$(INSTALLED)/python $(INSTALLED)/go $(INSTALLED)/neovim \
+	$(INSTALLED)/ripgrep
 
 $(INSTALLED):
 	mkdir -p $@

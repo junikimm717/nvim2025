@@ -7,7 +7,7 @@ WORKDIR /nvim
 COPY _bootstrap.sh .
 COPY Makefile .
 COPY pkgs ./pkgs
-RUN make -j$(nproc)
+RUN make docker -j$(nproc)
 
 COPY . .
 
