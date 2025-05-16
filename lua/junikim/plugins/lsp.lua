@@ -23,11 +23,11 @@ return {
     event = "InsertEnter",
     dependencies = {
       { "L3MON4D3/LuaSnip" },
-      { "hrsh7th/cmp-nvim-lsp" }, -- Required
-      { "hrsh7th/cmp-buffer" }, -- Optional
-      { "hrsh7th/cmp-path" }, -- Optional
+      { "hrsh7th/cmp-nvim-lsp" },     -- Required
+      { "hrsh7th/cmp-buffer" },       -- Optional
+      { "hrsh7th/cmp-path" },         -- Optional
       { "saadparwaiz1/cmp_luasnip" }, -- Optional
-      { "hrsh7th/cmp-nvim-lua" }, -- Optional
+      { "hrsh7th/cmp-nvim-lua" },     -- Optional
     },
     config = function()
       local cmp = require("cmp")
@@ -85,13 +85,13 @@ return {
             i = function(fallback)
               --  and cmp.get_selected_entry()
               if cmp.visible() then
-                cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true })
+                cmp.confirm({ select = true })
               else
                 fallback()
               end
             end,
             s = cmp.mapping.confirm({ select = true }),
-            c = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true }),
+            c = cmp.mapping.confirm({ select = true }),
           }),
         }),
         experimental = {
@@ -229,7 +229,7 @@ return {
       -- Add cmp_nvim_lsp capabilities settings to lspconfig
       -- This should be executed before you configure any language server
       lsp_defaults.capabilities =
-        vim.tbl_deep_extend("force", lsp_defaults.capabilities, require("cmp_nvim_lsp").default_capabilities())
+          vim.tbl_deep_extend("force", lsp_defaults.capabilities, require("cmp_nvim_lsp").default_capabilities())
 
       -- LspAttach is where you enable features that only work
       -- if there is a language server active in the file
@@ -257,6 +257,7 @@ return {
       require("mason-lspconfig").setup({
         ensure_installed = {},
         automatic_installation = false,
+        automatic_enable = true,
         handlers = {
           -- this first function is the "default handler"
           -- it applies to every language server without a "custom handler"
@@ -274,6 +275,11 @@ return {
       local installed = require("mason-registry").is_installed
       if not installed("clangd") and vim.fn.executable("clangd") then
         lspconfig.clangd.setup({
+          capabilities = lsp_capabilities,
+        })
+      end
+      if vim.fn.executable("sourcekit-lsp") then
+        lspconfig.sourcekit.setup({
           capabilities = lsp_capabilities,
         })
       end
