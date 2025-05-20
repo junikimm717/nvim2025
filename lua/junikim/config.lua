@@ -1,7 +1,7 @@
 ---@class Config
----@field lazy table
----@field mason table
----@field treesitter table
+---@field lazy table|nil
+---@field mason table|nil
+---@field treesitter table|nil
 local config = {
   mason = {
     -- language servers
