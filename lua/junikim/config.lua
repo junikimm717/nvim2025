@@ -54,7 +54,7 @@ local newconfig = nil
 local success, theme = pcall(require, "configs")
 if not success then
   local filepath = vim.fs.normalize(vim.fs.joinpath(vim.fn.stdpath("config"), "lua", "configs", "init.lua"))
-  if vim.fn.filewritable(filepath) then
+  if vim.fn.filewritable(filepath) and not vim.fn.filereadable(filepath) then
     vim.fn.writefile({ [[return require("configs.catppuccin")]] }, filepath)
     newconfig = require("configs")
   else
