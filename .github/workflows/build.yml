@@ -55,7 +55,7 @@ jobs:
           tags: junikimm717/nvim2025:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-  alpine-js:
+  alpine-c:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -74,8 +74,8 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           context: .
-          file: ./dockerfile/alpine-js.Dockerfile
+          file: ./dockerfile/alpine-c.Dockerfile
           push: true
-          tags: junikimm717/nvim2025:alpine-js
+          tags: junikimm717/nvim2025:alpine-c
           cache-from: type=gha
           cache-to: type=gha,mode=max
