@@ -52,7 +52,7 @@ jobs:
           context: .
           file: ./dockerfile/Dockerfile
           push: true
-          tags: junikimm717/nvim2025:latest
+          tags: junikimm717/nvim2025:arm
           cache-from: type=gha
           cache-to: type=gha,mode=max
   alpine-c:
