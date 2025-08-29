@@ -5,53 +5,94 @@ on:
   push:
     branches:
       - "master"
+name: build-bootstrap
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  IMAGE: junikimm717/nvim2025
+  TAG: bootstrap
 
 jobs:
-  bootstrap-x86:
+  build:
+    strategy:
+      matrix:
+        include:
+          - runs_on: ubuntu-24.04
+            platform: linux/amd64
+            cache_scope: bootstrap-amd64
+          - runs_on: ubuntu-24.04-arm64
+            platform: linux/arm64
+            cache_scope: bootstrap-arm64
+    runs-on: ${{ matrix.runs_on }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push by digest
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./dockerfile/bootstrap.Dockerfile
+          platforms: ${{ matrix.platform }}
+          # We push content-addressable digests for each arch
+          outputs: type=image,name=${{ env.IMAGE }}:${{ env.TAG }},push-by-digest=true
+          cache-from: type=gha,scope=${{ matrix.cache_scope }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.cache_scope }}
+
+      - name: Export digest
+        run: |
+          mkdir -p /tmp/digests
+          digest="${{ steps.build.outputs.digest }}"
+          echo "$digest" > "/tmp/digests/${{ matrix.platform }}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests
+          path: /tmp/digests/*
+          if-no-files-found: error
+
+  publish:
     runs-on: ubuntu-24.04
+    needs: [build]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      - name: Set up Docker Buildx
+      - name: Download digests
+        uses: actions/download-artifact@v4
+        with:
+          name: digests
+          path: /tmp/digests
+
+      - name: Set up Docker Buildx (for imagetools)
         uses: docker/setup-buildx-action@v3
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          platforms: linux/amd64
-          context: .
-          file: ./dockerfile/bootstrap.Dockerfile
-          push: true
-          tags: junikimm717/nvim2025:bootstrap
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-  bootstrap-arm:
-    runs-on: ubuntu-24.04-arm
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          platforms: linux/arm64
-          context: .
-          file: ./dockerfile/bootstrap.Dockerfile
-          push: true
-          tags: junikimm717/nvim2025:bootstrap
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+
+      - name: Create and push multi-arch manifest
+        run: |
+          set -euo pipefail
+          AMD64_DIGEST=$(cat /tmp/digests/linux_amd64 | sed 's/^/sha256:/;t;s/.*/&/')
+          ARM64_DIGEST=$(cat /tmp/digests/linux_arm64 | sed 's/^/sha256:/;t;s/.*/&/')
+          docker buildx imagetools create \
+            -t "${IMAGE}:${TAG}" \
+            "${IMAGE}@${AMD64_DIGEST}" \
+            "${IMAGE}@${ARM64_DIGEST}"
+        env:
+          IMAGE: ${{ env.IMAGE }}
+          TAG: ${{ env.TAG }}
