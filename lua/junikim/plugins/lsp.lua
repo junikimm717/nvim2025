@@ -222,14 +222,13 @@ return {
       vim.opt.signcolumn = "yes"
     end,
     config = function()
-      local lspconfig = require("lspconfig")
-      local lsp_defaults = lspconfig.util.default_config
       local builtin = require("telescope.builtin")
 
-      -- Add cmp_nvim_lsp capabilities settings to lspconfig
-      -- This should be executed before you configure any language server
-      lsp_defaults.capabilities =
-          vim.tbl_deep_extend("force", lsp_defaults.capabilities, require("cmp_nvim_lsp").default_capabilities())
+      local caps = require("cmp_nvim_lsp").default_capabilities()
+      vim.lsp.config("*", {
+        capabilities = caps,
+        cmd_env = { NODE_OPTIONS = "--max-old-space-size=4096" },
+      })
 
       -- LspAttach is where you enable features that only work
       -- if there is a language server active in the file
@@ -251,48 +250,19 @@ return {
         end,
       })
 
-      local lsp_capabilities = require("cmp_nvim_lsp").default_capabilities()
-
       require("mason").setup()
       require("mason-lspconfig").setup({
         ensure_installed = {},
         automatic_installation = false,
         automatic_enable = true,
-        handlers = {
-          -- this first function is the "default handler"
-          -- it applies to every language server without a "custom handler"
-          function(server_name)
-            lspconfig[server_name].setup({
-              capabilities = lsp_capabilities,
-              cmd_env = {
-                NODE_OPTIONS = "--max-old-space-size=4096",
-              },
-            })
-          end,
-        },
       })
-
-      local installed = require("mason-registry").is_installed
-      if not installed("clangd") and vim.fn.executable("clangd") then
-        lspconfig.clangd.setup({
-          capabilities = lsp_capabilities,
-        })
+      local function enable_if(bin, name)
+        if vim.fn.executable(bin) == 1 then vim.lsp.enable(name) end
       end
-      if vim.fn.executable("sourcekit-lsp") then
-        lspconfig.sourcekit.setup({
-          capabilities = lsp_capabilities,
-        })
-      end
-      if vim.fn.executable("pls") then
-        lspconfig.perlpls.setup({
-          capabilities = lsp_capabilities,
-        })
-      end
-      if not installed("gopls") and vim.fn.executable("gopls") then
-        lspconfig.gopls.setup({
-          capabilities = lsp_capabilities,
-        })
-      end
+      enable_if("clangd", "clangd")
+      enable_if("sourcekit-lsp", "sourcekit")
+      enable_if("pls", "perlpls")
+      enable_if("gopls", "gopls")
     end,
   },
   {
