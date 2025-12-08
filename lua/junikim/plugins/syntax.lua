@@ -19,10 +19,5 @@ return {
       indent = { enable = true, disable = { "ruby", "markdown", "mdx" } },
     },
   },
-  {
-    "davidmh/mdx.nvim",
-    config = true,
-    dependencies = { "nvim-treesitter/nvim-treesitter" },
-  },
   { "lervag/vimtex" },
 }
