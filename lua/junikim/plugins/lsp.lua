@@ -260,7 +260,7 @@ return {
         if vim.fn.executable(bin) == 1 then vim.lsp.enable(name) end
       end
       enable_if("clangd", "clangd")
-      enable_if("sourcekit-lsp", "sourcekit")
+      --enable_if("sourcekit-lsp", "sourcekit")
       enable_if("pls", "perlpls")
       enable_if("gopls", "gopls")
     end,
