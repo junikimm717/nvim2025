@@ -2,6 +2,7 @@ return {
   { -- Highlight, edit, and navigate code
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
+    lazy = false,
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
       ensure_installed = require("junikim.config").treesitter,
@@ -14,9 +15,13 @@ return {
         --  If you are experiencing weird indenting issues, add the language to
         --  the list of additional_vim_regex_highlighting and disabled languages for indent.
         disable = { "latex", "perl", "htmldjango", "dockerfile" },
+        additional_vim_regex_highlighting = true,
       },
       indent = { enable = true, disable = { "ruby", "markdown", "mdx" } },
     },
+    config = function(_, opts)
+      require("nvim-treesitter.configs").setup(opts)
+    end,
   },
   { "lervag/vimtex" },
 }
