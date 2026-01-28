@@ -21,6 +21,16 @@ return {
       indent = { enable = true, disable = { "ruby", "markdown", "mdx" } },
     },
     config = function(_, opts)
+      local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
+
+      parser_config.mdx = {
+        install_info = {
+          url = "https://github.com/srazzak/tree-sitter-mdx",
+          files = { "src/parser.c", "src/scanner.c" }, -- or just parser.c
+          branch = "main",
+        },
+        filetype = "mdx",
+      }
       require("nvim-treesitter.configs").setup(opts)
     end,
   },

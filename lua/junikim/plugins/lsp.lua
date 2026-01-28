@@ -133,6 +133,7 @@ return {
           nix = { "nixfmt" },
           cpp = { "clang-format" },
           c = { "clang-format" },
+          mdx = prettier,
         },
       })
       vim.keymap.set({ "n", "v" }, "<leader>ft", function()

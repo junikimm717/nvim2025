@@ -47,6 +47,12 @@ vim.opt.scrolloff = 7
 vim.cmd("filetype plugin indent on")
 vim.cmd("filetype on")
 
+vim.filetype.add({
+  extension = {
+    mdx = "mdx",
+  },
+})
+
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "python",
   callback = function(args)
