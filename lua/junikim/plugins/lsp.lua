@@ -263,6 +263,7 @@ return {
       enable_if("clangd", "clangd")
       --enable_if("sourcekit-lsp", "sourcekit")
       enable_if("pls", "perlpls")
+      enable_if("zls", "zls")
       enable_if("gopls", "gopls")
     end,
   },
