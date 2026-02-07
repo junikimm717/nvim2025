@@ -3,6 +3,7 @@
 DIR="$(realpath "$(dirname "$0")")"
 cd "$DIR" || exit 1
 
+BUILD_DIR="${BUILD_DIR:-DIR/build}"
 PKG_DIR="$DIR/build/pkgs"
 BIN_DIR="$DIR/build/bin"
 export PATH="$BIN_DIR:$PATH"

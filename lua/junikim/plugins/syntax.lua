@@ -1,37 +1,38 @@
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = require("junikim.config").treesitter,
+  callback = function()
+    vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+    vim.wo[0][0].foldexpr = "v:lua.vim.treesitter.foldexpr()"
+    vim.wo[0][0].foldmethod = "expr"
+    vim.treesitter.start()
+  end,
+})
+
+vim.api.nvim_create_autocmd("User", {
+  pattern = "TSUpdate",
+  callback = function()
+    require("nvim-treesitter.parsers").mdx = {
+      install_info = {
+        url = "https://github.com/srazzak/tree-sitter-mdx",
+        revision = "3aa29e8de1bf0213948a04fe953039b6ab73777b",
+      },
+    }
+  end,
+})
+
 return {
-  { -- Highlight, edit, and navigate code
+  {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
     lazy = false,
-    branch = "master",
+    branch = "main",
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
-    opts = {
-      ensure_installed = require("junikim.config").treesitter,
-      -- Autoinstall languages that are not installed
-      auto_install = true,
-      sync_install = false,
-      highlight = {
-        enable = true,
-        -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
-        --  If you are experiencing weird indenting issues, add the language to
-        --  the list of additional_vim_regex_highlighting and disabled languages for indent.
-        disable = { "perl", "htmldjango", "dockerfile" },
-        additional_vim_regex_highlighting = false,
-      },
-      indent = { enable = true, disable = { "ruby", "markdown", "mdx" } },
-    },
     config = function(_, opts)
-      local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
-
-      parser_config.mdx = {
-        install_info = {
-          url = "https://github.com/srazzak/tree-sitter-mdx",
-          files = { "src/parser.c", "src/scanner.c" }, -- or just parser.c
-          branch = "main",
-        },
-        filetype = "mdx",
-      }
-      require("nvim-treesitter.configs").setup(opts)
+      require("nvim-treesitter").setup({
+        install_dir = vim.fn.stdpath("data") .. "/site",
+      })
+      -- install specified treesitter parsers
+      require("nvim-treesitter").install(require("junikim.config").treesitter)
     end,
   },
   { "lervag/vimtex" },

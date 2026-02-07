@@ -120,8 +120,9 @@ vim.api.nvim_create_autocmd("TermOpen", {
 vim.api.nvim_create_user_command("FullSetup", function()
   local is_headless = #vim.api.nvim_list_uis() == 0
   if not is_headless then
-    vim.api.nvim_err_writeln("Cannot execute FullSetup in non-headless mode")
+    print("Cannot execute FullSetup in non-headless mode")
+  else
+    require("mason.api.command").MasonInstall(require("junikim.config").mason)
+    require("nvim-treesitter").install(require("junikim.config").treesitter):wait()
   end
-  require("mason.api.command").MasonInstall(require("junikim.config").mason)
-  vim.cmd([[:TSUpdateSync]])
 end, { desc = "Setup Mason and Treesitter" })
