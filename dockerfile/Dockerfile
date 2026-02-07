@@ -4,7 +4,7 @@ WORKDIR /workspace
 RUN apt-get update
 RUN apt-get install -y ninja-build gettext cmake unzip curl build-essential file
 RUN curl -LJ https://github.com/neovim/neovim/archive/refs/tags/nightly.tar.gz\
-  -o neovim.tar.gz\
+  -o neovim.tar.gz \
   && tar -xzvf neovim.tar.gz\
   && mv neovim-nightly neovim
 

@@ -4,6 +4,24 @@ Now with a new plugin manager and theme switching!
 
 [Old Config](https://git.junickim.me/junikimm717/nvim2023)
 
+## Configuration
+
+Device-specific configuration should be done on ./lua/configs/init.lua.
+
+```lua
+return {
+  lazy = {
+    require("themes.everforest"),
+  },
+  treesitter = {
+    -- list of all treesitter parsers you will use. autoinstall is not supported.
+  },
+  mason = {
+    -- list of all mason packages you will use.
+  }
+}
+```
+
 ## Docker
 
 The CI builds images for both x86_64 and arm64

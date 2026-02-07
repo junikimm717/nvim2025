@@ -1,10 +1,23 @@
+local ignore_filetypes = { "perl", "htmldjango", "dockerfile" }
+local ignored = {}
+for _, ftype in pairs(ignore_filetypes) do
+  ignored[ftype] = true
+end
+
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = require("junikim.config").treesitter,
+  --pattern = require("junikim.config").treesitter,
+  pattern = "*",
   callback = function()
+    if ignored[vim.bo.filetype] then
+      return
+    end
+
+    if not pcall(vim.treesitter.start) then
+      return
+    end
     vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
     vim.wo[0][0].foldexpr = "v:lua.vim.treesitter.foldexpr()"
     vim.wo[0][0].foldmethod = "expr"
-    vim.treesitter.start()
   end,
 })
 
