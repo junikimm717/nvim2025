@@ -121,7 +121,13 @@ vim.api.nvim_create_user_command("FullSetup", function()
   if not is_headless then
     print("Cannot execute FullSetup in non-headless mode")
   else
-    require("mason.api.command").MasonInstall(require("junikim.config").mason)
-    require("nvim-treesitter").install(require("junikim.config").treesitter):wait()
+    local mason = require("junikim.config").mason
+    local treesitter = require("junikim.config").treesitter
+    if mason == nil or #mason ~= 0 then
+      require("mason.api.command").MasonInstall(mason)
+    end
+    if treesitter == nil or #treesitter ~= 0 then
+      require("nvim-treesitter").install(treesitter):wait()
+    end
   end
 end, { desc = "Setup Mason and Treesitter" })
