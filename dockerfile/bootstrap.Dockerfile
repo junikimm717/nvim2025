@@ -1,7 +1,7 @@
 FROM debian:bookworm-slim
 
 RUN apt-get update
-RUN apt-get install -y git tar wget make perl unzip gcc
+RUN apt-get install -y git tar wget make perl unzip xz-utils
 WORKDIR /nvim
 
 COPY _bootstrap.sh .
@@ -18,4 +18,4 @@ COPY ./container/.profile /root/.bashrc
 
 WORKDIR /workspace
 
-CMD ["/bin/ash"]
+CMD ["/bin/bash"]

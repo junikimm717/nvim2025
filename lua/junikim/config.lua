@@ -10,7 +10,6 @@ local config = {
     "json-lsp",
     "texlab",
     "pyright",
-    "ltex-ls",
     "lua-language-server",
     "marksman",
     -- linters and formatters

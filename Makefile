@@ -6,11 +6,11 @@ INSTALLED = ./build/installed
 
 .PHONY: all docker
 
-all: $(INSTALLED) $(INSTALLED)/node \
+all: $(INSTALLED) $(INSTALLED)/zig $(INSTALLED)/node \
 	$(INSTALLED)/python $(INSTALLED)/go $(INSTALLED)/neovim \
 	$(INSTALLED)/tmuxs $(INSTALLED)/ripgrep
 
-docker: $(INSTALLED) $(INSTALLED)/node \
+docker: $(INSTALLED) $(INSTALLED)/zig $(INSTALLED)/node \
 	$(INSTALLED)/python $(INSTALLED)/go $(INSTALLED)/neovim \
 	$(INSTALLED)/ripgrep
 
@@ -23,6 +23,10 @@ $(INSTALLED)/stow:
 
 $(INSTALLED)/node: $(INSTALLED)/stow
 	./_bootstrap.sh install_node
+	touch $@
+
+$(INSTALLED)/zig:
+	./_bootstrap.sh install_zig
 	touch $@
 
 $(INSTALLED)/go: $(INSTALLED)/stow

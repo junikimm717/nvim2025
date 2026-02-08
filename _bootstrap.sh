@@ -1,11 +1,13 @@
 #!/bin/sh
 
-DIR="$(realpath "$(dirname "$0")")"
-cd "$DIR" || exit 1
+set -eu
 
-BUILD_DIR="${BUILD_DIR:-DIR/build}"
-PKG_DIR="$DIR/build/pkgs"
-BIN_DIR="$DIR/build/bin"
+DIR="$(realpath "$(dirname "$0")")"
+cd "$DIR"
+
+BUILD_DIR="${BUILD_DIR:-$DIR/build}"
+PKG_DIR="$BUILD_DIR/pkgs"
+BIN_DIR="$BUILD_DIR/bin"
 export PATH="$BIN_DIR:$PATH"
 
 # Check os and architecture.
@@ -30,7 +32,7 @@ case "$(arch)" in
 esac
 
 nodeps=0
-for cmd in git tar wget make perl unzip chmod tr awk; do
+for cmd in git tar wget make perl unzip chmod tr awk xz; do
   if ! command -v $cmd > /dev/null 2>&1; then
     echo "You do not have $cmd! Cannot build..."
     nodeps=1
@@ -48,8 +50,9 @@ install_stow() {
   if ! test -d "$STOW_PKG_PATH"; then
     echo "Stow not found, installing it..."
 
-    ! test -f "$STOW_PACKAGE.tar.gz" &&\
-      wget "https://ftp.gnu.org/gnu/stow/$STOW_PACKAGE.tar.gz"
+    ! test -f "$STOW_PACKAGE.tar.gz" && \
+      wget "https://gnu.mirror.constant.com/stow/$STOW_PACKAGE.tar.gz" \
+      -O "$STOW_PACKAGE.tar.gz"
 
     tar -xzf "$STOW_PACKAGE.tar.gz"
     cd "$STOW_PACKAGE" || exit 1
@@ -57,9 +60,9 @@ install_stow() {
   fi
   cat <<EOF > "$BIN_DIR/stow" && chmod +x "$BIN_DIR/stow"
 #!/bin/sh
-DIR="\$(realpath "\$(dirname "\$0")")/../.."
-PKG_DIR="\$DIR/build/pkgs"
-BIN_DIR="\$DIR/build/bin"
+DIR="\$(realpath "\$(dirname "\$0")")/.."
+PKG_DIR="\$DIR/pkgs"
+BIN_DIR="\$DIR/bin"
 
 perl -I"\$PKG_DIR/$STOW_PACKAGE/lib" "\$PKG_DIR/$STOW_PACKAGE/bin/stow" "\$@"
 EOF
@@ -91,9 +94,9 @@ install_go() {
 
   cat <<EOF > "$BIN_DIR/go" && chmod +x "$BIN_DIR/go"
 #!/bin/sh
-DIR="\$(realpath "\$(dirname "\$0")")/../.."
-PKG_DIR="\$DIR/build/pkgs"
-BIN_DIR="\$DIR/build/bin"
+DIR="\$(realpath "\$(dirname "\$0")")/.."
+PKG_DIR="\$DIR/pkgs"
+BIN_DIR="\$DIR/bin"
 export GOBIN="\$BIN_DIR"
 export GOPATH="\$PKG_DIR/gopath:\$GOPATH"
 "\$PKG_DIR/$GO_PACKAGE/bin/go" "\$@"
@@ -105,12 +108,40 @@ EOF
 
   cat <<EOF > "$BIN_DIR/gopls" && chmod +x "$BIN_DIR/gopls"
 #!/bin/sh
-DIR="\$(realpath "\$(dirname "\$0")")/../.."
-PKG_DIR="\$DIR/build/pkgs"
-BIN_DIR="\$DIR/build/bin"
+DIR="\$(realpath "\$(dirname "\$0")")/.."
+PKG_DIR="\$DIR/pkgs"
+BIN_DIR="\$DIR/bin"
 export GOBIN="\$BIN_DIR"
 export GOPATH="\$PKG_DIR/gopath:\$GOPATH"
 "\$PKG_DIR/$GO_PACKAGE/bin/gopls" "\$@"
+EOF
+}
+
+install_zig() {
+  cd "$PKG_DIR"
+  if ! test -d "$ZIG_PKG_PATH"; then
+    echo "Package not found, installing zig..."
+    ! test -f "$ZIG_PACKAGE.tar.gz" &&\
+      wget "https://ziglang.org/download/$ZIG_VERSION/$ZIG_PACKAGE.tar.xz"
+    tar -xJf "$ZIG_PACKAGE.tar.xz"
+  fi
+cat <<EOF > "$BIN_DIR/zig-cc" && chmod +x "$BIN_DIR/zig-cc"
+#!/bin/sh
+set -eu
+
+zig_bin="\$(cd "\$(dirname "\$0")" && pwd)/../pkgs/$ZIG_PACKAGE/zig"
+
+args=
+for arg in "\$@"; do
+  case "\$arg" in
+    --target=*) ;;
+    *)
+      args="\$args \$arg"
+      ;;
+  esac
+done
+set -x
+exec "\$zig_bin" cc \$args
 EOF
 }
 
@@ -125,8 +156,8 @@ install_python() {
     cd "$PYTHON_PACKAGE" || exit 1
   fi
   cd "$PKG_DIR" || exit 1
-  stow --target="$DIR/build/bin" --stow --dir="$PYTHON_PACKAGE" bin
-  mkdir -p "$DIR/build/lib" && stow --target="$DIR/build/lib" --stow --dir="$PYTHON_PACKAGE" lib
+  stow --target="$BUILD_DIR/bin" --stow --dir="$PYTHON_PACKAGE" bin
+  mkdir -p "$BUILD_DIR/lib" && stow --target="$BUILD_DIR/lib" --stow --dir="$PYTHON_PACKAGE" lib
 }
 
 install_neovim() {
@@ -143,28 +174,36 @@ install_neovim() {
   fi
   # you need to write a "nvim" script that wraps everything with the correct
   # environment variables.
-  mkdir -p "$DIR/build/nvim/config"
-  rm -rf "$DIR/build/nvim/config/nvim"
-  ln -sf "$DIR" "$DIR/build/nvim/config/nvim"
+  mkdir -p "$BUILD_DIR/nvim/config"
+  rm -rf "$BUILD_DIR/nvim/config/nvim"
+  ln -sf "$DIR" "$BUILD_DIR/nvim/config/nvim"
   cat <<EOF > "$BIN_DIR/nvim" && chmod +x "$BIN_DIR/nvim"
 #!/bin/sh
-DIR="\$(realpath "\$(dirname "\$0")")/../.."
-PKG_DIR="\$DIR/build/pkgs"
-BIN_DIR="\$DIR/build/bin"
+DIR="\$(realpath "\$(dirname "\$0")")/.."
+PKG_DIR="\$DIR/pkgs"
+BIN_DIR="\$DIR/bin"
 
 export GOBIN="\$BIN_DIR"
 export GOPATH="\$PKG_DIR/gopath:\$GOPATH"
 export PATH="\$BIN_DIR:\$PATH"
-export XDG_CONFIG_HOME="\$DIR/build/nvim/config"
-export XDG_DATA_HOME="\$DIR/build/nvim/share"
-if mkdir -p "\$DIR/build/nvim/state" 2>/dev/null && test -w "\$DIR/build/nvim/state"; then
-  export XDG_STATE_HOME="\$DIR/build/nvim/state"
+export XDG_CONFIG_HOME="\$DIR/nvim/config"
+export XDG_DATA_HOME="\$DIR/nvim/share"
+export CC="\$BIN_DIR/zig-cc"
+if mkdir -p "\$DIR/nvim/state" 2>/dev/null && test -w "\$DIR/nvim/state"; then
+  export XDG_STATE_HOME="\$DIR/nvim/state"
 fi
-if mkdir -p "\$DIR/build/nvim/cache" 2>/dev/null && test -w "\$DIR/build/nvim/cache"; then
-  export XDG_CACHE_HOME="\$DIR/build/nvim/cache"
+if mkdir -p "\$DIR/nvim/cache" 2>/dev/null && test -w "\$DIR/nvim/cache"; then
+  export XDG_CACHE_HOME="\$DIR/nvim/cache"
 fi
 
-"\$PKG_DIR/$NEOVIM_PACKAGE/bin/nvim" "\$@"
+exec "\$PKG_DIR/$NEOVIM_PACKAGE/bin/nvim" "\$@"
+EOF
+  cat <<EOF > "$BIN_DIR/setup-nvim" && chmod +x "$BIN_DIR/setup-nvim"
+#!/bin/sh
+DIR="\$(realpath "\$(dirname "\$0")")/.."
+PKG_DIR="\$DIR/pkgs"
+BIN_DIR="\$DIR/bin"
+"\$BIN_DIR/nvim" --headless +Lazy! sync +FullSetup +qa
 EOF
 }
 
