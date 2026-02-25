@@ -109,19 +109,41 @@ return {
       local function refresh_all_harpoon_tabs()
         local list = harpoon:list()
         unpin_all()
+
         for _, mark in ipairs(list.items) do
           local buf = get_buffer_by_mark(mark)
           if buf == nil then
             vim.cmd("badd " .. mark.value)
             buf = get_buffer_by_mark(mark)
           end
+
           if buf ~= nil then
+            -- 1. Pin the buffer in Barbar
             state.toggle_pin(buf)
+
+            -- 2. Apply Treesitter highlighting and folding logic
+            -- We use vim.api.nvim_buf_call to run logic safely within that buffer
+            vim.api.nvim_buf_call(buf, function()
+              -- Skip if it's an empty buffer or specialized filetype
+              local ft = vim.bo.filetype
+              if ft == "" or ft == "oil" or ft == "harpoon" then return end
+
+              -- Start Treesitter (pcall to prevent crashing on unsupported files)
+              if pcall(vim.treesitter.start) then
+                -- Set buffer-local indentation
+                vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+
+                -- Set window-local folding
+                -- Note: This applies to the CURRENT window viewing this buffer
+                vim.wo.foldmethod = "expr"
+                vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+                vim.wo.foldlevel = 99 -- Start with folds open
+              end
+            end)
           end
         end
         render.update()
       end
-
       vim.api.nvim_create_autocmd({ "BufEnter", "BufAdd", "BufLeave", "User" }, {
         callback = refresh_all_harpoon_tabs,
       })
