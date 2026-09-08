@@ -150,9 +150,9 @@ install_python() {
   cd "$PKG_DIR" || exit 1
   if ! test -d "$PYTHON_PKG_PATH"; then
     echo "Package not found, installing Python3..."
-    ! test -f "$PYTHON_PACKAGE.tar.gz" &&\
-      wget "https://github.com/junikimm717/static-python/releases/download/binaries/$PYTHON_PACKAGE.tar.gz"
-    tar -xzf "$PYTHON_PACKAGE.tar.gz"
+    ! test -f "$PYTHON_ARCHIVE.tar.gz" &&\
+      wget "https://github.com/junikimm717/static-python/releases/download/python-$PYTHON_VERSION/$PYTHON_ARCHIVE.tar.gz"
+    tar -xzf "$PYTHON_ARCHIVE.tar.gz"
     cd "$PYTHON_PACKAGE" || exit 1
   fi
   cd "$PKG_DIR" || exit 1
