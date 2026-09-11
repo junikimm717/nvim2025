@@ -266,6 +266,12 @@ return {
       enable_if("pls", "perlpls")
       enable_if("zls", "zls")
       enable_if("gopls", "gopls")
+
+      -- verilog lsp's
+      enable_if("verible-verilog-ls", "verible")
+      enable_if("svlangserver", "svlangserver")
+      enable_if("svls", "svls")
+      enable_if("veridian", "veridian")
     end,
   },
   {
