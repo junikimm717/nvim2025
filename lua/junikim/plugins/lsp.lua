@@ -136,6 +136,8 @@ return {
           cpp = { "clang-format" },
           c = { "clang-format" },
           mdx = prettier,
+          systemverilog = { "verible" },
+          verilog = { "verible" },
         },
       })
       vim.keymap.set({ "n", "v" }, "<leader>ft", function()

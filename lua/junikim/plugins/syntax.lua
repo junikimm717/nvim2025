@@ -15,7 +15,20 @@ vim.api.nvim_create_autocmd("FileType", {
     if not pcall(vim.treesitter.start) then
       return
     end
-    vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+
+    -- Indenting needs an indents.scm, which is a separate thing from the
+    -- parser: systemverilog, make, gitcommit and gitignore all ship a parser
+    -- with no indents query.
+    local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
+    local has_indents = false
+    if lang then
+      local ok, query = pcall(vim.treesitter.query.get, lang, "indents")
+      has_indents = ok and query ~= nil
+    end
+    if has_indents then
+      vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+    end
+
     vim.wo[0][0].foldexpr = "v:lua.vim.treesitter.foldexpr()"
     vim.wo[0][0].foldmethod = "expr"
   end,
