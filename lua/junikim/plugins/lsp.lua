@@ -235,6 +235,18 @@ return {
         cmd_env = { NODE_OPTIONS = "--max-old-space-size=4096" },
       })
 
+      -- svlangserver indexes the filesystem, not git, so gitignoring a build
+      -- directory does not keep it out of the index. cocotb writes a generated
+      -- .v into sim_build on every run and Vivado fills obj/ with netlists;
+      -- indexed, they turn up as extra definitions of modules you are editing.
+      vim.lsp.config("svlangserver", {
+        settings = {
+          systemverilog = {
+            excludeIndexing = { "**/sim_build/**", "**/obj/**", "**/.venv/**", "**/venv/**" },
+          },
+        },
+      })
+
       -- LspAttach is where you enable features that only work
       -- if there is a language server active in the file
       vim.api.nvim_create_autocmd("LspAttach", {
