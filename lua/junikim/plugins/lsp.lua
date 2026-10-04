@@ -245,6 +245,51 @@ return {
             excludeIndexing = { "**/sim_build/**", "**/obj/**", "**/.venv/**", "**/venv/**" },
           },
         },
+
+        -- Per-project settings. svlangserver reads no config file of its own --
+        -- settings only ever arrive over LSP -- and the .nvim/lspconfig.json in
+        -- its README is coc.nvim's mechanism, not native vim.lsp's. So read a
+        -- file from the root marker directory and hand it over ourselves.
+        --
+        -- It lives next to the marker because the marker is already the thing
+        -- that defines a project here. Note svlangserver writes its own index to
+        -- .nvim (it picks the directory from the client name), so .svlangserver
+        -- is ours to use and nothing collides.
+        before_init = function(params, config)
+          local root = config.root_dir
+            or (params.rootUri and vim.uri_to_fname(params.rootUri))
+          if not root then
+            return
+          end
+
+          local path = root .. "/.svlangserver/settings.json"
+          local fd = io.open(path, "r")
+          if not fd then
+            return
+          end
+          local raw = fd:read("*a")
+          fd:close()
+
+          local ok, parsed = pcall(vim.json.decode, raw)
+          if not ok or type(parsed) ~= "table" then
+            -- Silence here would look identical to "no overrides", and the
+            -- symptom (lint errors you thought you had configured away) gives
+            -- no hint that a typo is the reason.
+            vim.notify("svlangserver: ignoring malformed " .. path, vim.log.levels.WARN)
+            return
+          end
+
+          -- Shallow per-key, not tbl_deep_extend: deep-extending two lists
+          -- merges them index by index, so a project list shorter than the
+          -- default would inherit the tail of the default instead of replacing
+          -- it. Each setting is replaced whole.
+          config.settings = config.settings or {}
+          config.settings.systemverilog = vim.tbl_extend(
+            "force",
+            config.settings.systemverilog or {},
+            parsed.systemverilog or {}
+          )
+        end,
       })
 
       -- LspAttach is where you enable features that only work
