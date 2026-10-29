@@ -21,91 +21,52 @@ return {
 
   -- Autocompletion
   {
-    "hrsh7th/nvim-cmp",
+    "saghen/blink.cmp",
+    -- A release tag makes blink download a prebuilt fuzzy matcher instead of
+    -- needing a nightly Rust toolchain to build one.
+    version = "1.*",
     event = "InsertEnter",
     dependencies = {
       { "L3MON4D3/LuaSnip" },
-      { "hrsh7th/cmp-nvim-lsp" },     -- Required
-      { "hrsh7th/cmp-buffer" },       -- Optional
-      { "hrsh7th/cmp-path" },         -- Optional
-      { "saadparwaiz1/cmp_luasnip" }, -- Optional
-      { "hrsh7th/cmp-nvim-lua" },     -- Optional
     },
-    config = function()
-      local cmp = require("cmp")
-      local luasnip = require("luasnip")
-      local cmp_select = { behavior = cmp.SelectBehavior.Select }
-
-      cmp.setup({
-        sources = cmp.config.sources({
-          { name = "nvim_lsp" },
-          { name = "luasnip" },
-          { name = "path" },
-          { name = "nvim_lua" },
-          {
-            name = "lazydev",
-            group_index = 0, -- set group index to 0 to skip loading LuaLS completions
+    opts = {
+      keymap = {
+        preset = "none",
+        ["<C-l>"] = { "snippet_forward", "fallback" },
+        ["<C-h>"] = { "snippet_backward", "fallback" },
+        ["<C-p>"] = { "select_prev", "fallback" },
+        ["<C-n>"] = { "select_next", "fallback" },
+        ["<Up>"] = { "select_prev", "fallback" },
+        ["<Down>"] = { "select_next", "fallback" },
+        ["<Tab>"] = { "select_next", "fallback" },
+        ["<S-Tab>"] = { "cancel", "fallback" },
+        ["<CR>"] = { "accept", "fallback" },
+        ["<C-y>"] = { "select_and_accept", "fallback" },
+        ["<C-e>"] = { "cancel", "fallback" },
+      },
+      completion = {
+        -- Same as completeopt=menu,menuone,noinsert: the first item is
+        -- highlighted but nothing is typed until it is accepted.
+        list = { selection = { preselect = true, auto_insert = false } },
+        documentation = { auto_show = true },
+        ghost_text = { enabled = true },
+      },
+      snippets = { preset = "luasnip" },
+      sources = {
+        -- buffer is not listed: blink's lsp source already falls back to it
+        -- when the servers return nothing.
+        default = { "lazydev", "lsp", "snippets", "path" },
+        providers = {
+          lazydev = {
+            name = "LazyDev",
+            module = "lazydev.integrations.blink",
+            -- show lazydev's results above LuaLS's, as group_index = 0 did
+            score_offset = 100,
           },
-        }, {
-          { name = "buffer" },
-        }),
-        completion = {
-          completeopt = "menu,menuone,noinsert",
         },
-        mapping = cmp.mapping.preset.insert({
-          ["<C-l>"] = cmp.mapping(function(fallback)
-            if luasnip.jumpable(1) then
-              luasnip.jump(1)
-            else
-              fallback()
-            end
-          end, { "i", "s" }),
-          ["<C-h>"] = cmp.mapping(function(fallback)
-            if luasnip.jumpable(-1) then
-              luasnip.jump(-1)
-            else
-              fallback()
-            end
-          end, { "i", "s" }),
-          ["<C-p>"] = cmp.mapping.select_prev_item(cmp_select),
-          ["<C-n>"] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-              cmp.select_next_item(cmp_select)
-            else
-              fallback()
-            end
-          end),
-          ["<Tab>"] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-              cmp.select_next_item(cmp_select)
-            else
-              fallback()
-            end
-          end),
-          ["<S-Tab>"] = cmp.mapping.abort(),
-          ["<CR>"] = cmp.mapping({
-            i = function(fallback)
-              --  and cmp.get_selected_entry()
-              if cmp.visible() then
-                cmp.confirm({ select = true })
-              else
-                fallback()
-              end
-            end,
-            s = cmp.mapping.confirm({ select = true }),
-            c = cmp.mapping.confirm({ select = true }),
-          }),
-        }),
-        experimental = {
-          ghost_text = true,
-        },
-        snippet = {
-          expand = function(args)
-            luasnip.lsp_expand(args.body)
-          end,
-        },
-      })
-    end,
+      },
+      cmdline = { enabled = false },
+    },
   },
 
   {
@@ -214,7 +175,7 @@ return {
     cmd = { "LspInfo", "LspInstall", "LspStart" },
     event = { "BufReadPre", "BufNewFile" },
     dependencies = {
-      { "hrsh7th/cmp-nvim-lsp" },
+      { "saghen/blink.cmp" },
       { "williamboman/mason.nvim" },
       { "williamboman/mason-lspconfig.nvim" },
       { "WhoIsSethDaniel/mason-tool-installer.nvim" },
@@ -229,7 +190,7 @@ return {
     config = function()
       local builtin = require("telescope.builtin")
 
-      local caps = require("cmp_nvim_lsp").default_capabilities()
+      local caps = require("blink.cmp").get_lsp_capabilities()
       vim.lsp.config("*", {
         capabilities = caps,
         cmd_env = { NODE_OPTIONS = "--max-old-space-size=4096" },
