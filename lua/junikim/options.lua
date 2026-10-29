@@ -129,5 +129,12 @@ vim.api.nvim_create_user_command("FullSetup", function()
     if treesitter == nil or #treesitter ~= 0 then
       require("nvim-treesitter").install(treesitter):wait()
     end
+    -- blink.cmp downloads its fuzzy matcher in setup(), which otherwise first
+    -- runs on InsertEnter -- in a container, the first time anyone types.
+    require("lazy").load({ plugins = { "blink.cmp" } })
+    local fuzzy = require("blink.cmp.fuzzy")
+    if not vim.wait(120000, function() return fuzzy.implementation_type == "rust" end, 200) then
+      print("blink.cmp: prebuilt fuzzy matcher not downloaded, will use Lua fallback")
+    end
   end
 end, { desc = "Setup Mason and Treesitter" })
