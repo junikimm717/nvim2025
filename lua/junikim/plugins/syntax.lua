@@ -1,4 +1,7 @@
-local ignore_filetypes = { "perl", "htmldjango", "dockerfile" }
+-- tex: VimTeX's own syntax powers its motions, text objects and concealing,
+-- and it warns ("Syntax highlighting is controlled by Treesitter!") when
+-- treesitter highlighting replaces it.
+local ignore_filetypes = { "perl", "htmldjango", "dockerfile", "tex" }
 local ignored = {}
 for _, ftype in pairs(ignore_filetypes) do
   ignored[ftype] = true
