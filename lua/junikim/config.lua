@@ -53,7 +53,11 @@ local newconfig = nil
 local success, theme = pcall(require, "configs")
 if not success then
   local filepath = vim.fs.normalize(vim.fs.joinpath(vim.fn.stdpath("config"), "lua", "configs", "init.lua"))
-  if vim.fn.filewritable(filepath) and not vim.fn.filereadable(filepath) then
+  -- vim.fn returns 0/1, and 0 is truthy in Lua. filewritable() is also 0 for
+  -- a file that doesn't exist yet, so ask about the directory (2) instead.
+  -- The filereadable check keeps a configs/init.lua with an error in it from
+  -- being overwritten.
+  if vim.fn.filewritable(vim.fs.dirname(filepath)) == 2 and vim.fn.filereadable(filepath) == 0 then
     vim.fn.writefile({ [[return require("configs.catppuccin")]] }, filepath)
     newconfig = require("configs")
   else

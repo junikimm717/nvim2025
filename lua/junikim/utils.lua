@@ -10,7 +10,7 @@ end
 
 M.read_json = function(filename)
   filename = vim.fs.normalize(filename)
-  if not vim.fn.filereadable(filename) then
+  if vim.fn.filereadable(filename) == 0 then
     return nil
   end
   local content = vim.fn.readfile(filename)
