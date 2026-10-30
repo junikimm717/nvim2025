@@ -1,4 +1,4 @@
-vim.keymap.set("n", "<leader>o", "<cmd>lua vim.diagnostic.open_float()<CR>", opts)
+vim.keymap.set("n", "<leader>o", vim.diagnostic.open_float, { desc = "Line diagnostics" })
 
 return {
   {
@@ -103,7 +103,7 @@ return {
       })
       vim.keymap.set({ "n", "v" }, "<leader>ft", function()
         conform.format({
-          lsp_fallback = true,
+          lsp_format = "fallback",
           async = true,
         })
       end)
@@ -127,22 +127,21 @@ return {
         end
       end
 
-      local filter = function(linters)
-        local res = {}
-        for filetype, pkgs in pairs(linters) do
-          local available = {}
-          for _, linter in ipairs(pkgs) do
-            local binary = eval_fn_or_id(lint.linters[linter].cmd)
-            if vim.fn.executable(binary) == 1 then
-              table.insert(available, linter)
-            end
-          end
-          res[filetype] = available
-        end
-        return res
+      -- Checked on every run rather than once at startup: a linter installed
+      -- mid-session gets picked up, and eslint_d's cmd (a function that looks
+      -- for a project-local binary) is resolved for the buffer being linted.
+      local function installed(names)
+        return vim.tbl_filter(function(name)
+          local cmd = eval_fn_or_id(eval_fn_or_id(lint.linters[name] or {}).cmd)
+          return type(cmd) == "string" and vim.fn.executable(cmd) == 1
+        end, names)
       end
 
-      lint.linters_by_ft = filter({
+      local function try_lint()
+        lint.try_lint(installed(lint.linters_by_ft[vim.bo.filetype] or {}))
+      end
+
+      lint.linters_by_ft = {
         javascript = { "eslint_d" },
         typescript = { "eslint_d" },
         javascriptreact = { "eslint_d" },
@@ -152,20 +151,18 @@ return {
         bash = { "shellcheck" },
         sh = { "shellcheck" },
         cpp = { "cpplint" },
-      })
+      }
 
       local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
 
-      vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
+      -- Not BufEnter: that re-ran pylint on every switch back to a buffer.
+      vim.api.nvim_create_autocmd({ "BufReadPost", "BufWritePost", "InsertLeave" }, {
         group = lint_augroup,
-        callback = function()
-          lint.try_lint()
-        end,
+        callback = try_lint,
       })
 
-      vim.keymap.set("n", "<leader>f", function()
-        lint.try_lint()
-      end, { desc = "Trigger linting for current file" })
+      -- <leader>f on its own made <leader>ff/fg/fa/fh/ft wait for timeoutlen.
+      vim.keymap.set("n", "<leader>fl", try_lint, { desc = "Trigger linting for current file" })
     end,
   },
 
@@ -178,7 +175,6 @@ return {
       { "saghen/blink.cmp" },
       { "williamboman/mason.nvim" },
       { "williamboman/mason-lspconfig.nvim" },
-      { "WhoIsSethDaniel/mason-tool-installer.nvim" },
       { "L3MON4D3/LuaSnip" },
       { "nvim-telescope/telescope.nvim" },
     },
@@ -272,11 +268,10 @@ return {
         end,
       })
 
-      require("mason").setup()
       require("mason-lspconfig").setup({
         ensure_installed = {},
-        automatic_installation = false,
-        automatic_enable = true,
+        -- stylua's --lsp mode only formats, which conform already does.
+        automatic_enable = { exclude = { "stylua" } },
       })
       local function enable_if(bin, name)
         if vim.fn.executable(bin) == 1 then vim.lsp.enable(name) end
@@ -287,17 +282,25 @@ return {
       enable_if("zls", "zls")
       enable_if("gopls", "gopls")
 
-      -- verilog lsp's
-      enable_if("verible-verilog-ls", "verible")
-      enable_if("svlangserver", "svlangserver")
-      enable_if("svls", "svls")
-      enable_if("veridian", "veridian")
+      -- verilog lsp's: only the first one installed, since each attaches to
+      -- the same filetypes and two would duplicate every diagnostic.
+      for _, server in ipairs({
+        { "verible-verilog-ls", "verible" },
+        { "svlangserver", "svlangserver" },
+        { "svls", "svls" },
+        { "veridian", "veridian" },
+      }) do
+        if vim.fn.executable(server[1]) == 1 then
+          vim.lsp.enable(server[2])
+          break
+        end
+      end
     end,
   },
   {
     "L3MON4D3/LuaSnip",
     -- follow latest release.
-    version = "v2.3",
+    version = "v2.*",
     build = "make install_jsregexp",
     dependencies = {
       "rafamadriz/friendly-snippets",
