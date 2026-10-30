@@ -1,12 +1,15 @@
 FROM debian:bookworm AS builder
 
+# Same version as pkgs/*.sh. The moving nightly tag meant two builds of one
+# commit could ship different editors.
+ARG NEOVIM_VERSION=0.12.1
+
 WORKDIR /workspace
-RUN apt-get update
-RUN apt-get install -y ninja-build gettext cmake unzip curl build-essential file
-RUN curl -LJ https://github.com/neovim/neovim/archive/refs/tags/nightly.tar.gz\
+RUN apt-get update && apt-get install -y ninja-build gettext cmake unzip curl build-essential file
+RUN curl -LJ https://github.com/neovim/neovim/archive/refs/tags/v$NEOVIM_VERSION.tar.gz\
   -o neovim.tar.gz \
   && tar -xzvf neovim.tar.gz\
-  && mv neovim-nightly neovim
+  && mv neovim-$NEOVIM_VERSION neovim
 
 WORKDIR /workspace/neovim
 RUN make CMAKE_BUILD_TYPE=RelWithDebInfo
@@ -15,8 +18,7 @@ RUN cd build && cpack -G DEB && mv *.deb neovim.deb
 FROM debian:bookworm
 
 COPY --from=builder /workspace/neovim/build/neovim.deb /root/packages/neovim.deb
-RUN apt-get update
-RUN apt-get install -y ripgrep nodejs gcc make golang git fzf npm zip unzip\
+RUN apt-get update && apt-get install -y ripgrep nodejs gcc make golang git fzf npm zip unzip\
   curl wget tar openjdk-17-jre-headless python3-venv\
   /root/packages/neovim.deb
 RUN npm install -g tree-sitter-cli

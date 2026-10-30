@@ -18,7 +18,7 @@ fi
 
 . ./pkgs/noarch.sh
 
-case "$(arch)" in
+case "$(uname -m)" in
   x86_64)
     . ./pkgs/x86_64_linux.sh
     ;;
@@ -45,15 +45,21 @@ fi
 mkdir -p "$PKG_DIR"
 mkdir -p "$BIN_DIR"
 
+# Download $1 to $2 unless $2 is already there. wget writes to a temporary
+# name first: a failed or interrupted download must not leave a file behind
+# that the next run would take for a finished one.
+fetch() {
+  test -f "$2" && return 0
+  wget "$1" -O "$2.part"
+  mv "$2.part" "$2"
+}
+
 install_stow() {
   cd "$PKG_DIR" || exit 1
   if ! test -d "$STOW_PKG_PATH"; then
     echo "Stow not found, installing it..."
 
-    ! test -f "$STOW_PACKAGE.tar.gz" && \
-      wget "https://gnu.mirror.constant.com/stow/$STOW_PACKAGE.tar.gz" \
-      -O "$STOW_PACKAGE.tar.gz"
-
+    fetch "https://gnu.mirror.constant.com/stow/$STOW_PACKAGE.tar.gz" "$STOW_PACKAGE.tar.gz"
     tar -xzf "$STOW_PACKAGE.tar.gz"
     cd "$STOW_PACKAGE" || exit 1
     ./configure && make
@@ -72,8 +78,7 @@ install_node() {
   cd "$PKG_DIR" || exit 1
   if ! test -d "$NODE_PKG_PATH"; then
     echo "Package not found, installing NodeJS version $NODE_VERSION..."
-    ! test -f "$NODE_PACKAGE.tar.gz" &&\
-      wget "https://nodejs.org/download/release/v$NODE_VERSION/$NODE_PACKAGE.tar.gz"
+    fetch "https://nodejs.org/download/release/v$NODE_VERSION/$NODE_PACKAGE.tar.gz" "$NODE_PACKAGE.tar.gz"
     tar -xzf "$NODE_PACKAGE.tar.gz"
 
     export PATH="$NODE_PKG_PATH/bin:$PATH"
@@ -86,10 +91,10 @@ install_go() {
   cd "$PKG_DIR" || exit 1
   if ! test -d "$GO_PKG_PATH"; then
     echo "Package not found, installing Go version $GO_VERSION..."
-      ! test -f $GO_PACKAGE.tar.gz &&\
-        wget https://go.dev/dl/$GO_PACKAGE.tar.gz
-      tar -xzf $GO_PACKAGE.tar.gz && mv go $GO_PACKAGE
-      mkdir -p "$PKG_DIR/gopath"
+    fetch "https://go.dev/dl/$GO_PACKAGE.tar.gz" "$GO_PACKAGE.tar.gz"
+    tar -xzf "$GO_PACKAGE.tar.gz"
+    mv go "$GO_PACKAGE"
+    mkdir -p "$PKG_DIR/gopath"
   fi
 
   cat <<EOF > "$BIN_DIR/go" && chmod +x "$BIN_DIR/go"
@@ -118,11 +123,10 @@ EOF
 }
 
 install_zig() {
-  cd "$PKG_DIR"
+  cd "$PKG_DIR" || exit 1
   if ! test -d "$ZIG_PKG_PATH"; then
     echo "Package not found, installing zig..."
-    ! test -f "$ZIG_PACKAGE.tar.gz" &&\
-      wget "https://ziglang.org/download/$ZIG_VERSION/$ZIG_PACKAGE.tar.xz"
+    fetch "https://ziglang.org/download/$ZIG_VERSION/$ZIG_PACKAGE.tar.xz" "$ZIG_PACKAGE.tar.xz"
     tar -xJf "$ZIG_PACKAGE.tar.xz"
   fi
 cat <<EOF > "$BIN_DIR/zig-cc" && chmod +x "$BIN_DIR/zig-cc"
@@ -131,17 +135,17 @@ set -eu
 
 zig_bin="\$(cd "\$(dirname "\$0")" && pwd)/../pkgs/$ZIG_PACKAGE/zig"
 
-args=
+# Drop --target=* and keep everything else as separate words: rebuilding "\$@"
+# in place, rather than joining into one string, keeps arguments that contain
+# spaces intact. The for list is expanded once, before any shift.
 for arg in "\$@"; do
+  shift
   case "\$arg" in
     --target=*) ;;
-    *)
-      args="\$args \$arg"
-      ;;
+    *) set -- "\$@" "\$arg" ;;
   esac
 done
-set -x
-exec "\$zig_bin" cc \$args
+exec "\$zig_bin" cc "\$@"
 EOF
 }
 
@@ -150,8 +154,7 @@ install_python() {
   cd "$PKG_DIR" || exit 1
   if ! test -d "$PYTHON_PKG_PATH"; then
     echo "Package not found, installing Python3..."
-    ! test -f "$PYTHON_ARCHIVE.tar.gz" &&\
-      wget "https://github.com/junikimm717/static-python/releases/download/python-$PYTHON_VERSION/$PYTHON_ARCHIVE.tar.gz"
+    fetch "https://github.com/junikimm717/static-python/releases/download/python-$PYTHON_VERSION/$PYTHON_ARCHIVE.tar.gz" "$PYTHON_ARCHIVE.tar.gz"
     tar -xzf "$PYTHON_ARCHIVE.tar.gz"
     cd "$PYTHON_PACKAGE" || exit 1
   fi
@@ -164,11 +167,9 @@ install_neovim() {
   cd "$PKG_DIR" || exit 1
   if ! test -d "$NEOVIM_PKG_PATH"; then
     echo "Package not found, installing Neovim version $NEOVIM_VERSION..."
-    ! test -f "$NEOVIM_PACKAGE.tar.gz"\
-      && wget "https://github.com/neovim/neovim/releases/download/v$NEOVIM_VERSION/$NEOVIM_DL.tar.gz"\
-      && mv "$NEOVIM_DL.tar.gz" "$NEOVIM_PACKAGE.tar.gz"\
-      && tar -xzf "$NEOVIM_PACKAGE.tar.gz"\
-      && mv "$NEOVIM_DL" "$NEOVIM_PACKAGE"
+    fetch "https://github.com/neovim/neovim/releases/download/v$NEOVIM_VERSION/$NEOVIM_DL.tar.gz" "$NEOVIM_PACKAGE.tar.gz"
+    tar -xzf "$NEOVIM_PACKAGE.tar.gz"
+    mv "$NEOVIM_DL" "$NEOVIM_PACKAGE"
 
     export PATH="$NEOVIM_PKG_PATH/bin:$PATH"
   fi
@@ -211,9 +212,8 @@ install_ripgrep() {
   cd "$PKG_DIR" || exit 1
   if ! test -d "$RIPGREP_PKG_PATH"; then
     echo "Package not found, installing Ripgrep version $RIPGREP_VERSION..."
-    ! test -f $RIPGREP_PACKAGE.tar.gz &&\
-      wget "https://github.com/BurntSushi/ripgrep/releases/download/$RIPGREP_VERSION/$RIPGREP_PACKAGE.tar.gz" &&\
-      tar -xzf "$RIPGREP_PACKAGE.tar.gz"
+    fetch "https://github.com/BurntSushi/ripgrep/releases/download/$RIPGREP_VERSION/$RIPGREP_PACKAGE.tar.gz" "$RIPGREP_PACKAGE.tar.gz"
+    tar -xzf "$RIPGREP_PACKAGE.tar.gz"
   fi
   cd "$PKG_DIR" || exit 1
   stow --target="$BIN_DIR" --stow --dir="$PKG_DIR" "$RIPGREP_PACKAGE"
@@ -224,7 +224,7 @@ install_tmuxs() {
   "$BIN_DIR/go" install github.com/junegunn/fzf@latest
 }
 
-case "$1" in
+case "${1:-}" in
   install_*)
     "$1"
     ;;

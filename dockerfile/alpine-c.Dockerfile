@@ -43,4 +43,6 @@ EOF
 RUN nvim --headless +Lazy! sync +FullSetup +qa
 COPY ./container/.profile /root/.profile
 
+# ash reads .profile only as a login shell; an interactive shell reads $ENV.
+ENV ENV=/root/.profile
 CMD ["/bin/ash"]

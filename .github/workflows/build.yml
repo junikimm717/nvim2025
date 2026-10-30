@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
@@ -29,15 +29,14 @@ jobs:
           file: ./dockerfile/Dockerfile
           push: true
           tags: junikimm717/nvim2025:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          # Without a scope all three jobs share one cache and overwrite it.
+          cache-from: type=gha,scope=debian
+          cache-to: type=gha,mode=max,scope=debian
   debian-arm:
     runs-on: ubuntu-24.04-arm
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: actions/checkout@v4
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to Docker Hub
@@ -53,13 +52,14 @@ jobs:
           file: ./dockerfile/Dockerfile
           push: true
           tags: junikimm717/nvim2025:arm
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          # Without a scope all three jobs share one cache and overwrite it.
+          cache-from: type=gha,scope=debian-arm
+          cache-to: type=gha,mode=max,scope=debian-arm
   alpine-c:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
@@ -77,5 +77,6 @@ jobs:
           file: ./dockerfile/alpine-c.Dockerfile
           push: true
           tags: junikimm717/nvim2025:alpine-c
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          # Without a scope all three jobs share one cache and overwrite it.
+          cache-from: type=gha,scope=alpine-c
+          cache-to: type=gha,mode=max,scope=alpine-c
