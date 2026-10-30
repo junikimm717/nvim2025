@@ -5,6 +5,9 @@ return {
     dependencies = { "nvim-lua/plenary.nvim" },
     init = function()
       local harpoon = require("harpoon")
+      -- Without setup, harpoon never saves a mark's cursor position on
+      -- BufLeave or syncs the list on exit.
+      harpoon:setup()
 
       local function selector(idx)
         local function func()
@@ -84,25 +87,18 @@ return {
         end
       end
 
+      -- Compare whole paths: matching one as a substring of the other pins
+      -- data.lua for a mark on a.lua.
       local function get_buffer_by_mark(mark)
+        if mark.value == "" then
+          return nil
+        end
+        local mark_path = vim.fs.normalize(vim.fn.fnamemodify(mark.value, ":p"))
         for _, buf in ipairs(vim.api.nvim_list_bufs()) do
           local buffer_path = vim.api.nvim_buf_get_name(buf)
-
-          if buffer_path == "" or mark.value == "" then
-            goto continue
-          end
-
-          local mark_pattern = mark.value:gsub("([%(%)%.%%%+%-%*%?%[%]%^%$])", "%%%1")
-          if string.match(buffer_path, mark_pattern) then
+          if buffer_path ~= "" and vim.fs.normalize(buffer_path) == mark_path then
             return buf
           end
-
-          local buffer_path_pattern = buffer_path:gsub("([%(%)%.%%%+%-%*%?%[%]%^%$])", "%%%1")
-          if string.match(mark.value, buffer_path_pattern) then
-            return buf
-          end
-
-          ::continue::
         end
       end
 
@@ -113,54 +109,39 @@ return {
         for _, mark in ipairs(list.items) do
           local buf = get_buffer_by_mark(mark)
           if buf == nil then
-            vim.cmd("badd " .. mark.value)
+            vim.cmd("badd " .. vim.fn.fnameescape(mark.value))
             buf = get_buffer_by_mark(mark)
           end
 
           if buf ~= nil then
-            -- 1. Pin the buffer in Barbar
             state.toggle_pin(buf)
-
-            -- 2. Apply Treesitter highlighting and folding logic
-            -- We use vim.api.nvim_buf_call to run logic safely within that buffer
-            vim.api.nvim_buf_call(buf, function()
-              -- Skip if it's an empty buffer or specialized filetype
-              local ft = vim.bo.filetype
-              if ft == "" or ft == "oil" or ft == "harpoon" then return end
-
-              -- Start Treesitter (pcall to prevent crashing on unsupported files)
-              if pcall(vim.treesitter.start) then
-                -- Set buffer-local indentation
-                vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
-
-                -- Set window-local folding
-                -- Note: This applies to the CURRENT window viewing this buffer
-                vim.wo.foldmethod = "expr"
-                vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
-                vim.wo.foldlevel = 99 -- Start with folds open
-              end
-            end)
           end
         end
         render.update()
       end
-      vim.api.nvim_create_autocmd({ "BufEnter", "BufAdd", "BufLeave", "User" }, {
+      -- Treesitter, indent and folds are set up by the FileType autocmd in
+      -- syntax.lua; redoing it here put treesitter's indentexpr on buffers
+      -- whose language has no indents query.
+      vim.api.nvim_create_autocmd({ "BufEnter", "BufAdd", "BufLeave" }, {
         callback = refresh_all_harpoon_tabs,
+      })
+      harpoon:extend({
+        ADD = refresh_all_harpoon_tabs,
+        REMOVE = refresh_all_harpoon_tabs,
+        REORDER = refresh_all_harpoon_tabs,
+        LIST_CHANGE = refresh_all_harpoon_tabs,
       })
     end,
   },
   {
     "stevearc/oil.nvim",
-    ---@module 'oil'
-    ---@type oil.SetupOpts
-    opts = {},
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
       require("oil").setup({
+        watch_for_changes = true,
         view_options = {
           show_hidden = true,
-          watch_for_changes = true,
-        }
+        },
       })
       vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
     end,
