@@ -4,4 +4,5 @@
 - [ ] tmux should launch automatically when possible
 - [ ] separate different dev instances
 
-- [ ] You NEED to install gcc too because not on some barebones systems.
+- [x] You NEED to install gcc too because not on some barebones systems.
+  (The bootstrapped `nvim` compiles with `zig-cc`.)

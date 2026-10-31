@@ -22,14 +22,12 @@ vim.opt.wrap = false
 vim.opt.conceallevel = 1
 
 vim.o.foldcolumn = "1" -- '0' is not bad
-vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
+vim.o.foldlevel = 99
 vim.o.foldlevelstart = 99
 vim.o.foldenable = true
 
 vim.opt.splitbelow = false
 vim.opt.splitright = false
-
-vim.g.indentLine_fileTypeExclude = { "text", "tex" }
 
 vim.opt.undodir = vim.fn.stdpath("data") .. "/undodir"
 vim.opt.undofile = true
@@ -37,14 +35,12 @@ vim.opt.hlsearch = true
 vim.opt.incsearch = true
 vim.opt.inccommand = "split"
 
-vim.opt.nu = true
-vim.opt.rnu = true
+vim.opt.relativenumber = true
 vim.opt.termguicolors = true
 
 vim.opt.scrolloff = 7
 
 vim.cmd("filetype plugin indent on")
-vim.cmd("filetype on")
 
 vim.filetype.add({
   extension = {
@@ -62,17 +58,9 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
-vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-  pattern = { "*.ms", "*.me", "*.mom" },
-  callback = function(args)
-    vim.bo.filetype = "verilog"
-  end,
-})
-
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "tex", "text" },
   callback = function(args)
-    vim.o.smarttab = false
     vim.bo.autoindent = false
   end,
 })
@@ -85,7 +73,7 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = "markdown",
+  pattern = { "markdown", "mdx" },
   callback = function(args)
     vim.bo.shiftwidth = 2
     vim.bo.tabstop = 2
@@ -93,6 +81,15 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.bo.autoindent = true
     vim.bo.preserveindent = true
     vim.bo.copyindent = true
+  end,
+})
+
+-- Neovim ships no mdx ftplugin, so gc had no commentstring to use. HTML
+-- comments are a syntax error in MDX; it takes JSX expression comments.
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "mdx",
+  callback = function(args)
+    vim.bo.commentstring = "{/* %s */}"
   end,
 })
 
@@ -110,8 +107,8 @@ vim.api.nvim_create_autocmd("FileType", {
 
 vim.api.nvim_create_autocmd("TermOpen", {
   callback = function(args)
-    vim.opt.number = false
-    vim.opt.relativenumber = false
+    vim.opt_local.number = false
+    vim.opt_local.relativenumber = false
   end,
 })
 
@@ -123,10 +120,10 @@ vim.api.nvim_create_user_command("FullSetup", function()
   else
     local mason = require("junikim.config").mason
     local treesitter = require("junikim.config").treesitter
-    if mason == nil or #mason ~= 0 then
+    if mason and #mason > 0 then
       require("mason.api.command").MasonInstall(mason)
     end
-    if treesitter == nil or #treesitter ~= 0 then
+    if treesitter and #treesitter > 0 then
       require("nvim-treesitter").install(treesitter):wait()
     end
     -- blink.cmp downloads its fuzzy matcher in setup(), which otherwise first

@@ -18,15 +18,18 @@ return {
         lsp_type_definitions = { theme = "dropdown" },
       },
       defaults = {
+        -- These are Lua patterns matched anywhere in the path, so a bare
+        -- ".git" also hid legit.txt. %f[%w_.] anchors each to the start of
+        -- a path component, and the trailing / to a directory.
         file_ignore_patterns = {
-          "node_modules",
-          ".git",
-          "venv",
-          "__pycache__",
-          ".pio",
-          ".vscode",
-          ".idea",
-          "vendor",
+          "%f[%w_.]node_modules/",
+          "%f[%w_.]%.git/",
+          "%f[%w_.]venv/",
+          "%f[%w_.]__pycache__/",
+          "%f[%w_.]%.pio/",
+          "%f[%w_.]%.vscode/",
+          "%f[%w_.]%.idea/",
+          "%f[%w_.]vendor/",
         },
       },
       extensions = {
@@ -36,7 +39,8 @@ return {
     require("telescope").load_extension("fzf")
 
     vim.keymap.set("n", "<C-P>", function()
-      if vim.fs.root(vim.env.PWD, ".git") then
+      -- $PWD is where nvim started; getcwd() follows :cd
+      if vim.fs.root(vim.fn.getcwd(), ".git") then
         builtin.git_files()
       else
         builtin.find_files()
