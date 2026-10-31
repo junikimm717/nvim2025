@@ -211,6 +211,13 @@ return {
       -- directory does not keep it out of the index. cocotb writes a generated
       -- .v into sim_build on every run and Vivado fills obj/ with netlists;
       -- indexed, they turn up as extra definitions of modules you are editing.
+      -- marksman is a .NET binary, which aborts on startup when libicu is
+      -- missing, as it is on minimal servers and in the bootstrap image.
+      -- Invariant globalization only affects culture-specific formatting.
+      vim.lsp.config("marksman", {
+        cmd_env = { DOTNET_SYSTEM_GLOBALIZATION_INVARIANT = "1" },
+      })
+
       vim.lsp.config("svlangserver", {
         settings = {
           systemverilog = {

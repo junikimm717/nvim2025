@@ -20,8 +20,10 @@ FROM julia:bookworm
 RUN julia -e 'using Pkg; Pkg.add(["Preferences", "Finch", "HDF5", "TensorMarket", "JSON", "BenchmarkTools"]);'
 #RUN julia -e 'using Finch; using HDF5; using TensorMarket; using JSON;'
 
+# Debian's nodejs is 18; typescript-language-server 6 requires Node >= 22.
+COPY --from=node:24-bookworm-slim /usr/local /usr/local
 COPY --from=builder /workspace/neovim/build/neovim.deb /root/packages/neovim.deb
-RUN apt-get update && apt-get install -y ripgrep nodejs gcc make golang git fzf npm zip unzip\
+RUN apt-get update && apt-get install -y ripgrep gcc make golang git fzf zip unzip\
   curl wget tar python3-venv cmake hdf5-tools libhdf5-dev\
   liblapack-dev libopenblas-dev file clangd\
   /root/packages/neovim.deb
