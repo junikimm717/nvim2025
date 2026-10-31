@@ -1,6 +1,6 @@
 FROM debian:bookworm-slim
 
-RUN apt-get update && apt-get install -y git tar wget make perl unzip xz-utils
+RUN apt-get update && apt-get install -y git tar wget curl make perl unzip xz-utils
 WORKDIR /nvim
 
 COPY _bootstrap.sh .

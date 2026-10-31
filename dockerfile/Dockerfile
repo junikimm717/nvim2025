@@ -2,7 +2,7 @@ FROM debian:bookworm AS builder
 
 # Same version as pkgs/*.sh. The moving nightly tag meant two builds of one
 # commit could ship different editors.
-ARG NEOVIM_VERSION=0.12.1
+ARG NEOVIM_VERSION=0.12.6
 
 WORKDIR /workspace
 RUN apt-get update && apt-get install -y ninja-build gettext cmake unzip curl build-essential file

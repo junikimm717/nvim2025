@@ -32,7 +32,8 @@ case "$(uname -m)" in
 esac
 
 nodeps=0
-for cmd in git tar wget make perl unzip chmod tr awk xz; do
+# curl: nvim-treesitter and blink.cmp download with it from inside nvim.
+for cmd in git tar wget curl make perl unzip chmod tr awk xz; do
   if ! command -v $cmd > /dev/null 2>&1; then
     echo "You do not have $cmd! Cannot build..."
     nodeps=1

@@ -64,5 +64,11 @@ return {
       require("nvim-treesitter").install(require("junikim.config").treesitter)
     end,
   },
-  { "lervag/vimtex" },
+  {
+    "lervag/vimtex",
+    -- Follow releases: master moves its minimum Neovim ahead of releases
+    -- (it required 0.12.4 on 2026-10-30, breaking .tex in every image on an
+    -- older Neovim) while v2.18 still supports 0.10.
+    version = "v2.*",
+  },
 }

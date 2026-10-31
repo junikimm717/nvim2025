@@ -16,7 +16,8 @@ return {
     "tailwindcss-language-server",
     "typescript-language-server",
     "json-lsp",
-    "marksman",
+    -- not marksman: Mason only has a glibc build, so on musl every markdown
+    -- buffer stopped on a "failed to spawn" error.
     -- linters and formatters
     "prettierd",
     "eslint_d",

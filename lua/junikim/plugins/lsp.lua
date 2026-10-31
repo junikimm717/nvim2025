@@ -1,5 +1,11 @@
 vim.keymap.set("n", "<leader>o", vim.diagnostic.open_float, { desc = "Line diagnostics" })
 
+local eslint_configs = {
+  "eslint.config.js", "eslint.config.mjs", "eslint.config.cjs",
+  "eslint.config.ts", "eslint.config.mts", "eslint.config.cts",
+  ".eslintrc", ".eslintrc.js", ".eslintrc.cjs", ".eslintrc.json", ".eslintrc.yml", ".eslintrc.yaml",
+}
+
 return {
   {
     "williamboman/mason.nvim",
@@ -77,6 +83,15 @@ return {
       local prettier = { "prettierd", "prettier", stop_after_first = true }
       local prettier_eslint = { "eslint_d", "prettierd", "rustywind" }
       conform.setup({
+        formatters = {
+          eslint_d = {
+            -- eslint_d errors out in a project with no ESLint config, so
+            -- every format there reported "Formatter failed".
+            condition = function(_, ctx)
+              return vim.fs.root(ctx.dirname, eslint_configs) ~= nil
+            end,
+          },
+        },
         formatters_by_ft = {
           lua = { "stylua" },
           python = { "isort", "black" },
