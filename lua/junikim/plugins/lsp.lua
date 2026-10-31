@@ -340,7 +340,10 @@ return {
     "L3MON4D3/LuaSnip",
     -- follow latest release.
     version = "v2.*",
-    build = "make install_jsregexp",
+    -- Delete the old libraries first: the build overwrites them in place, and
+    -- macOS then SIGKILLs Neovim (Code Signature Invalid) when it loads one.
+    build = "rm -f deps/luasnip-jsregexp.so deps/jsregexp/jsregexp.so deps/jsregexp005/jsregexp.so"
+      .. " deps/jsregexp006/jsregexp.so && make install_jsregexp",
     dependencies = {
       "rafamadriz/friendly-snippets",
     },
