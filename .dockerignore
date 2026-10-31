@@ -9,3 +9,5 @@
 /dockerfile
 /build
 *.md
+.agents
+.claude

@@ -1,8 +1,8 @@
 ; Markdown
 ; ==========
 
-(atx_heading (markdown_inline) @text.title)
-(setext_heading (paragraph) @text.title)
+(atx_heading (markdown_inline) @markup.heading)
+(setext_heading (paragraph) @markup.heading)
 
 [
   (atx_h1_marker)
@@ -18,7 +18,7 @@
 [
   (link_title)
   (fenced_code_block)
-] @text.literal
+] @markup.raw
 
 [
   (fenced_code_block_delimiter)
@@ -28,11 +28,11 @@
 
 [
   (link_destination)
-] @text.uri
+] @markup.link.url
 
 [
   (link_label)
-] @text.reference
+] @markup.link
 
 [
   (list_marker_plus)

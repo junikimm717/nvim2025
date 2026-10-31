@@ -15,7 +15,8 @@ return {
     "tailwindcss-language-server",
     "typescript-language-server",
     "json-lsp",
-    "marksman",
+    -- not marksman: Mason only has a glibc build, so on musl every markdown
+    -- buffer stopped on a "failed to spawn" error.
     -- linters and formatters
     "prettierd",
     "eslint_d",
@@ -40,4 +41,6 @@ EOF
 RUN nvim --headless +Lazy! sync +FullSetup +qa
 COPY ./container/.profile /root/.profile
 
+# ash reads .profile only as a login shell; an interactive shell reads $ENV.
+ENV ENV=/root/.profile
 CMD ["/bin/ash"]

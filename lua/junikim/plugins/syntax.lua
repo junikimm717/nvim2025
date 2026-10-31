@@ -1,4 +1,7 @@
-local ignore_filetypes = { "perl", "htmldjango", "dockerfile" }
+-- tex: VimTeX's own syntax powers its motions, text objects and concealing,
+-- and it warns ("Syntax highlighting is controlled by Treesitter!") when
+-- treesitter highlighting replaces it.
+local ignore_filetypes = { "perl", "htmldjango", "dockerfile", "tex" }
 local ignored = {}
 for _, ftype in pairs(ignore_filetypes) do
   ignored[ftype] = true
@@ -61,5 +64,16 @@ return {
       require("nvim-treesitter").install(require("junikim.config").treesitter)
     end,
   },
-  { "lervag/vimtex" },
+  {
+    "lervag/vimtex",
+    -- Follow releases: master moves its minimum Neovim ahead of releases
+    -- (it required 0.12.4 on 2026-10-30, breaking .tex in every image on an
+    -- older Neovim) while v2.18 still supports 0.10.
+    version = "v2.*",
+    init = function()
+      -- Without latexmk VimTeX warns on every .tex buffer, e.g. in all the
+      -- container images; editing works the same without its compiler.
+      vim.g.vimtex_compiler_enabled = vim.fn.executable("latexmk")
+    end,
+  },
 }
