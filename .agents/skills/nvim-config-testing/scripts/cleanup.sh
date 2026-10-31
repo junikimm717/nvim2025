@@ -18,12 +18,16 @@ ids="$( { docker ps -q --filter name=nvt-; for img in $(docker images --format '
 [ -n "$ids" ] && docker kill $ids >/dev/null
 
 # Language servers, prettierd daemons and stuck nvim processes started by the
-# runs all have their cwd inside WORK.
+# runs all have their cwd inside WORK. Skip this script and its ancestors:
+# a caller that cd'd into WORK would otherwise be killed mid-cleanup.
+mine=" "; a=$$
+while [ "${a:-0}" -gt 1 ]; do mine+="$a "; a="$(awk '/^PPid:/{print $2}' "/proc/$a/status" 2>/dev/null)"; done
 n=0
 for d in /proc/[0-9]*; do
   p="${d#/proc/}"
   cwd="$(readlink "/proc/$p/cwd" 2>/dev/null)" || continue
-  case "$cwd" in "$WORK"*) [ "$p" != "$$" ] && kill -9 "$p" 2>/dev/null && n=$((n + 1)) ;; esac
+  case "$mine" in *" $p "*) continue ;; esac
+  case "$cwd" in "$WORK"*) kill -9 "$p" 2>/dev/null && n=$((n + 1)) ;; esac
 done
 # The TUI's `nvim --embed` child may have a different cwd; match its env.
 for p in $(pgrep -f "nvim --embed -c luafile .*/harness.lua" || true); do

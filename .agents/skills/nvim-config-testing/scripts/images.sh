@@ -13,7 +13,7 @@
 # step don't fail the build. So for each image this also
 #   1. scans the FullSetup part of the build log for errors,
 #   2. runs every Mason binary's --version,
-#   3. opens 11 filetypes in a real Neovim (image-check.lua) inside tmux, so
+#   3. opens 12 filetypes in a real Neovim (image-check.lua) inside tmux, so
 #      a prompt shows up as a hang with the screen captured instead of
 #      silently blocking.
 # Output: WORK/images/{build-T.log, T.txt, T-screen.txt, T-mason.txt}

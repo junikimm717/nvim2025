@@ -54,7 +54,7 @@ it too: `bash scripts/setup.sh $WORK-master master` and run the same thing.
   Mason/treesitter lists.
 - **images.sh**: a build exiting 0 proves little, because errors inside the
   headless `FullSetup` don't fail it. So for each image it also scans the
-  FullSetup log, runs every Mason binary, and opens 11 filetypes in a real
+  FullSetup log, runs every Mason binary, and opens 12 filetypes in a real
   Neovim. Check that servers attach where installed, `blink fuzzy: rust`
   shows (`lua` means its binary download failed), and `messages: -` shows.
   A HUNG image is almost always a prompt; its screen is printed.

@@ -218,6 +218,23 @@ return {
         cmd_env = { DOTNET_SYSTEM_GLOBALIZATION_INVARIANT = "1" },
       })
 
+      -- mdx-analyzer only answers hover, definition, completion and type
+      -- errors for the JSX/ESM parts when typescript.enabled is set, which
+      -- lspconfig leaves off. It also refuses to start without a TypeScript
+      -- to load, so outside a project with its own node_modules/typescript,
+      -- borrow the copy bundled with Mason's typescript-language-server.
+      vim.lsp.config("mdx_analyzer", {
+        init_options = { typescript = { enabled = true } },
+        before_init = function(_, config)
+          local ts = config.init_options.typescript
+          ts.tsdk = require("lspconfig.util").get_typescript_server_path(config.root_dir)
+          if ts.tsdk == "" then
+            ts.tsdk = vim.fn.stdpath("data")
+              .. "/mason/packages/typescript-language-server/node_modules/typescript/lib"
+          end
+        end,
+      })
+
       vim.lsp.config("svlangserver", {
         settings = {
           systemverilog = {
@@ -328,6 +345,8 @@ return {
       "rafamadriz/friendly-snippets",
     },
     config = function()
+      -- markdown's snippets (links, code blocks, tables) for mdx too
+      require("luasnip").filetype_extend("mdx", { "markdown" })
       require("luasnip.loaders.from_vscode").lazy_load()
       require("luasnip.loaders.from_snipmate").lazy_load({
         paths = { "./lua/junikim/snippets" },

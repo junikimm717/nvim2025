@@ -13,7 +13,7 @@ end
 
 local samples = {
   ["a.lua"] = "local x = 1", ["a.py"] = "import os", ["a.ts"] = "const x: number = 1",
-  ["a.json"] = '{"a":1}', ["a.md"] = "# hi", ["a.c"] = "int main(void){}", ["a.sh"] = "echo hi",
+  ["a.json"] = '{"a":1}', ["a.md"] = "# hi", ["a.mdx"] = "# hi", ["a.c"] = "int main(void){}", ["a.sh"] = "echo hi",
   ["a.html"] = "<div></div>", ["a.tex"] = "\\documentclass{article}", ["a.go"] = "package main",
   ["a.jl"] = "x = 1",
 }

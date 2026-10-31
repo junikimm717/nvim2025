@@ -12,6 +12,7 @@ local config = {
     "pyright",
     "lua-language-server",
     "marksman",
+    "mdx-analyzer",
     -- linters and formatters
     "prettierd",
     "black",
@@ -50,6 +51,7 @@ local config = {
     "toml",
     "yaml",
     "nix",
+    "mdx",
   },
 }
 

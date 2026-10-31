@@ -73,7 +73,7 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = "markdown",
+  pattern = { "markdown", "mdx" },
   callback = function(args)
     vim.bo.shiftwidth = 2
     vim.bo.tabstop = 2
@@ -81,6 +81,15 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.bo.autoindent = true
     vim.bo.preserveindent = true
     vim.bo.copyindent = true
+  end,
+})
+
+-- Neovim ships no mdx ftplugin, so gc had no commentstring to use. HTML
+-- comments are a syntax error in MDX; it takes JSX expression comments.
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "mdx",
+  callback = function(args)
+    vim.bo.commentstring = "{/* %s */}"
   end,
 })
 
