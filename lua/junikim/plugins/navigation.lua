@@ -71,6 +71,12 @@ return {
       local harpoon = require("harpoon")
 
       barbar.setup({
+        -- Every animation runs its own frame-rate timer that re-renders the
+        -- whole tabline. Wiping or re-adding many buffers at once (as the
+        -- harpoon refresh below does) starts one per buffer, and the timers
+        -- outran the event loop: Neovim sat at 100% CPU and stopped
+        -- responding.
+        animation = false,
         hide = {
           inactive = true,
         },
