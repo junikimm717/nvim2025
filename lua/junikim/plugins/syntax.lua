@@ -70,5 +70,10 @@ return {
     -- (it required 0.12.4 on 2026-10-30, breaking .tex in every image on an
     -- older Neovim) while v2.18 still supports 0.10.
     version = "v2.*",
+    init = function()
+      -- Without latexmk VimTeX warns on every .tex buffer, e.g. in all the
+      -- container images; editing works the same without its compiler.
+      vim.g.vimtex_compiler_enabled = vim.fn.executable("latexmk")
+    end,
   },
 }
