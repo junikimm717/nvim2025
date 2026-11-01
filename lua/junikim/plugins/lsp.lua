@@ -304,21 +304,6 @@ return {
           vim.keymap.set("n", "gs", "<cmd>lua vim.lsp.buf.signature_help()<cr>", opts)
           vim.keymap.set("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
           vim.keymap.set("n", "<F4>", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
-
-          -- Fold with the server where treesitter can't: tex is kept off
-          -- treesitter for VimTeX, and the mdx parser has no folds query.
-          -- texlab and mdx-analyzer both send folding ranges.
-          local client = vim.lsp.get_client_by_id(event.data.client_id)
-          if client and client:supports_method("textDocument/foldingRange") then
-            local lang = vim.treesitter.language.get_lang(vim.bo[event.buf].filetype)
-            local ok, query = pcall(vim.treesitter.query.get, lang or "", "folds")
-            if not (vim.treesitter.highlighter.active[event.buf] and ok and query) then
-              for _, win in ipairs(vim.fn.win_findbuf(event.buf)) do
-                vim.wo[win][0].foldmethod = "expr"
-                vim.wo[win][0].foldexpr = "v:lua.vim.lsp.foldexpr()"
-              end
-            end
-          end
         end,
       })
 

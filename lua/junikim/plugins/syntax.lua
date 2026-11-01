@@ -31,11 +31,11 @@ vim.api.nvim_create_autocmd("FileType", {
     if has_indents then
       vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
     end
-
-    vim.wo[0][0].foldexpr = "v:lua.vim.treesitter.foldexpr()"
-    vim.wo[0][0].foldmethod = "expr"
   end,
 })
+
+-- After the autocmd above, so folds are picked once treesitter has started.
+require("junikim.folds")
 
 vim.api.nvim_create_autocmd("User", {
   pattern = "TSUpdate",
