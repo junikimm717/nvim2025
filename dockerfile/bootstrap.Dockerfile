@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 RUN apt-get update && apt-get install -y git tar wget curl make perl unzip xz-utils
 WORKDIR /nvim

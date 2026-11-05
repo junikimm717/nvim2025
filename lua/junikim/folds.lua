@@ -54,6 +54,29 @@ local function has_view(buf)
     and vim.fn.win_gettype() ~= "autocmd"
 end
 
+-- Telescope opens files with its prompt still in insert mode, where folds are
+-- not computed, so a view restores the cursor but not the closed folds. Load it
+-- again once telescope's mapping has finished and left insert mode (without a
+-- ModeChanged to wait for). By then it has also moved the cursor to any match,
+-- e.g. from live_grep: keep that position, and open the folds hiding it.
+local function load_view(buf)
+  vim.cmd("silent! loadview")
+  if not vim.fn.mode():match("^[iR]") then
+    return
+  end
+  vim.schedule(function()
+    if vim.api.nvim_get_current_buf() ~= buf or vim.fn.mode():match("^[iR]") then
+      return
+    end
+    local view = vim.fn.winsaveview()
+    vim.cmd("silent! loadview")
+    if vim.fn.line(".") ~= view.lnum then
+      vim.fn.winrestview(view)
+      vim.cmd("normal! zv")
+    end
+  end)
+end
+
 vim.api.nvim_create_autocmd("BufWinEnter", {
   group = group,
   callback = function(event)
@@ -62,7 +85,7 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
     -- and reloading the view on every entry would move the cursor back.
     if has_view(event.buf) and not vim.b[event.buf].view_loaded then
       vim.b[event.buf].view_loaded = true
-      vim.cmd("silent! loadview")
+      load_view(event.buf)
     end
   end,
 })

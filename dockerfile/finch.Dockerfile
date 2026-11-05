@@ -1,4 +1,4 @@
-FROM debian:bookworm AS builder
+FROM debian:trixie AS builder
 
 # Same version as pkgs/*.sh. The moving nightly tag meant two builds of one
 # commit could ship different editors.
@@ -15,13 +15,13 @@ WORKDIR /workspace/neovim
 RUN make CMAKE_BUILD_TYPE=RelWithDebInfo
 RUN cd build && cpack -G DEB && mv *.deb neovim.deb
 
-FROM julia:bookworm
+FROM julia:trixie
 
 RUN julia -e 'using Pkg; Pkg.add(["Preferences", "Finch", "HDF5", "TensorMarket", "JSON", "BenchmarkTools"]);'
 #RUN julia -e 'using Finch; using HDF5; using TensorMarket; using JSON;'
 
 # Debian's nodejs is 18; typescript-language-server 6 requires Node >= 22.
-COPY --from=node:24-bookworm-slim /usr/local /usr/local
+COPY --from=node:24-trixie-slim /usr/local /usr/local
 COPY --from=builder /workspace/neovim/build/neovim.deb /root/packages/neovim.deb
 RUN apt-get update && apt-get install -y ripgrep gcc make golang git fzf zip unzip\
   curl wget tar python3-venv cmake hdf5-tools libhdf5-dev\

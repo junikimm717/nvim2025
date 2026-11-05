@@ -1,4 +1,4 @@
-FROM debian:bookworm AS builder
+FROM debian:trixie AS builder
 
 # Same version as pkgs/*.sh. The moving nightly tag meant two builds of one
 # commit could ship different editors.
@@ -15,13 +15,13 @@ WORKDIR /workspace/neovim
 RUN make CMAKE_BUILD_TYPE=RelWithDebInfo
 RUN cd build && cpack -G DEB && mv *.deb neovim.deb
 
-FROM debian:bookworm
+FROM debian:trixie
 
 # Debian's nodejs is 18; typescript-language-server 6 requires Node >= 22.
-COPY --from=node:24-bookworm-slim /usr/local /usr/local
+COPY --from=node:24-trixie-slim /usr/local /usr/local
 COPY --from=builder /workspace/neovim/build/neovim.deb /root/packages/neovim.deb
 RUN apt-get update && apt-get install -y ripgrep gcc make golang git fzf zip unzip\
-  curl wget tar openjdk-17-jre-headless python3-venv clangd clang-format\
+  curl wget tar openjdk-21-jre-headless python3-venv clangd clang-format\
   /root/packages/neovim.deb
 RUN npm install -g tree-sitter-cli
 

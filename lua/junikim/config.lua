@@ -21,7 +21,6 @@ local config = {
     "flake8",
     "cpplint",
     "verible",
-    "nixfmt",
     "eslint_d",
     "stylua",
     "shellcheck",
@@ -54,6 +53,13 @@ local config = {
     "mdx",
   },
 }
+
+-- Mason only has a linux x64 build of nixfmt. Asking for it anywhere else makes
+-- :FullSetup exit 1, which failed the arm image.
+local uname = vim.uv.os_uname()
+if uname.sysname == "Linux" and uname.machine == "x86_64" then
+  table.insert(config.mason, "nixfmt")
+end
 
 local newconfig = nil
 local success, theme = pcall(require, "configs")
